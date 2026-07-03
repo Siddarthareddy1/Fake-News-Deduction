@@ -1,0 +1,15 @@
+.python/
+data/
+**/__pycache__/
+**/*.pyc
+.ipynb_checkpoints/
+frontend/node_modules/
+frontend/dist/
+.idea/
+.vscode/
+*.pth
+*.pt
+*.npy
+*.npz
+*.zip
+attention_A/
