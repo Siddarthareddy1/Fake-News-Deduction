@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SpinnerIcon, CheckIcon } from './Icons';
+import { jsPDF } from 'jspdf';
 
 export default function ExportReporting({ onNavigate, triggerToast, analysisResult }) {
   const [reportType, setReportType] = useState('full'); // 'exec' | 'full' | 'data'
@@ -82,10 +83,107 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
     const riskText = `${result.risk} RISK`;
 
     if (format === 'pdf') {
-      triggerToast('info', 'Opening print preview... Select "Save as PDF" to save the report.');
-      setTimeout(() => {
-        window.print();
-      }, 500);
+      try {
+        const doc = new jsPDF();
+        
+        // Report Header
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.setTextColor(24, 95, 165); // Palette A primary blue
+        doc.text("NEGT Fake News Authenticity Report", 20, 25);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 32);
+        doc.text(`Engine: Noise-Filtering Enhanced Graph Transformer v1.2`, 20, 37);
+        
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 42, 190, 42);
+        
+        // Article text section
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(15, 23, 42);
+        doc.text("Analyzed Article Content:", 20, 52);
+        
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(10);
+        doc.setTextColor(51, 65, 85);
+        
+        // Wrap text to fit page
+        const splitText = doc.splitTextToSize(result.text || "No news text provided.", 170);
+        doc.text(splitText, 20, 58);
+        
+        const textHeight = splitText.length * 5;
+        let nextY = 58 + textHeight + 10;
+        
+        doc.setLineWidth(0.5);
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, nextY - 5, 190, nextY - 5);
+        
+        // Verdict Card
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.setTextColor(15, 23, 42);
+        doc.text("Verification Verdict:", 20, nextY);
+        
+        // Verdict Badge
+        let badgeColor = [99, 153, 34]; // Green for Real
+        if (result.verdict === 'FAKE') {
+          badgeColor = [163, 45, 45]; // Red for Fake
+        } else if (result.verdict === 'UNCERTAIN') {
+          badgeColor = [186, 117, 23]; // Amber for Uncertain
+        }
+        
+        doc.setFillColor(...badgeColor);
+        doc.rect(20, nextY + 4, 170, 16, "F");
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text(`${finalVerdictText} (${confidenceText} Confidence) - ${riskText}`, 25, nextY + 14);
+        
+        nextY += 30;
+        
+        // Stats Grid
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(15, 23, 42);
+        doc.text("GNN Propagation Network Metrics:", 20, nextY);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(51, 65, 85);
+        doc.text(`Total Nodes: ${result.stats.nodes}`, 20, nextY + 8);
+        doc.text(`Total Edges: ${result.stats.edges}`, 20, nextY + 14);
+        doc.text(`Word Count: ${result.stats.words}`, 110, nextY + 8);
+        doc.text(`Social Media Mentions: ${result.stats.mentions}`, 110, nextY + 14);
+        
+        nextY += 24;
+        
+        // Key Findings
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(15, 23, 42);
+        doc.text("Key Analytical Findings:", 20, nextY);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(51, 65, 85);
+        
+        result.keyFindings.forEach((finding, idx) => {
+          doc.text(`- ${finding}`, 22, nextY + 7 + (idx * 6));
+        });
+        
+        const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.pdf`;
+        doc.save(filename);
+        triggerToast('success', `Direct PDF report "${filename}" downloaded successfully.`);
+      } catch (err) {
+        console.error(err);
+        triggerToast('error', 'Failed to generate direct PDF file.');
+      }
       return;
     }
 
@@ -337,7 +435,7 @@ ${result.keyFindings.map((f, i) => `${i + 1}. ${f}`).join('\n')}
               <div className="radio-formats-row mt-2">
                 <label className={`radio-format-pill ${format === 'pdf' ? 'selected' : ''}`}>
                   <input type="radio" name="format" value="pdf" checked={format === 'pdf'} onChange={() => setFormat('pdf')} />
-                  <span>PDF (via Print)</span>
+                  <span>PDF (Recommended)</span>
                 </label>
                 <label className={`radio-format-pill ${format === 'html' ? 'selected' : ''}`}>
                   <input type="radio" name="format" value="html" checked={format === 'html'} onChange={() => setFormat('html')} />
