@@ -56,7 +56,100 @@ export default function ExportReporting({ onNavigate, triggerToast }) {
       triggerToast('warning', 'Please generate the report first');
       return;
     }
-    triggerToast('success', `File "negt_verification_report.${format}" downloaded successfully.`);
+
+    let fileContent = "";
+    let mimeType = "text/plain";
+    const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.${format}`;
+
+    if (format === 'json') {
+      mimeType = "application/json";
+      fileContent = JSON.stringify({
+        reportType: reportType === 'full' ? 'Technical Report' : reportType === 'exec' ? 'Executive Summary' : 'Data Sheet',
+        model: "NEGT v1.2",
+        verdict: "LIKELY FAKE",
+        confidence: "96.8%",
+        riskLevel: "HIGH RISK",
+        graphSummary: { nodes: 156, edges: 234 },
+        generatedAt: new Date().toISOString(),
+        sectionsIncluded: Object.keys(sections).filter(k => sections[k])
+      }, null, 2);
+    } else if (format === 'csv') {
+      mimeType = "text/csv";
+      fileContent = "Metric,Value\n" +
+                    "Model,NEGT v1.2\n" +
+                    "Verdict,LIKELY FAKE\n" +
+                    "Confidence,96.8%\n" +
+                    "Risk Level,HIGH RISK\n" +
+                    "Nodes,156\n" +
+                    "Edges,234\n" +
+                    `Generated At,${new Date().toISOString()}\n`;
+    } else if (format === 'html') {
+      mimeType = "text/html";
+      fileContent = `<!DOCTYPE html>
+<html>
+<head>
+  <title>NEGT Fake News Verification Report</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; padding: 40px; background: #0a0d14; color: #f8fafc; line-height: 1.6; }
+    .card { background: #101524; border: 1px solid #1e293b; border-radius: 12px; padding: 32px; max-width: 600px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    h1 { color: #185fa5; font-size: 24px; border-bottom: 1px solid #1e293b; padding-bottom: 12px; }
+    .badge { background: #a32d2d; color: white; padding: 4px 10px; border-radius: 4px; font-weight: bold; }
+    .section-title { font-weight: bold; margin-top: 20px; color: #1d9e75; }
+    ul { padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>NEGT Authenticity Report</h1>
+    <p><strong>Verdict:</strong> <span class="badge">LIKELY FAKE (96.8% Confidence)</span></p>
+    <p><strong>Risk Level:</strong> HIGH RISK</p>
+    <p><strong>Model:</strong> NEGT v1.2</p>
+    <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+    <div class="section-title">Key Findings:</div>
+    <ul>
+      <li>Highly centralized propagation heavily dominated by bot nodes</li>
+      <li>Artificial viral spikes detected in early-stage engagement</li>
+      <li>Sourced from unverified clickbait networks</li>
+    </ul>
+  </div>
+</body>
+</html>`;
+    } else {
+      // PDF representation (Text summary masquerading as a printable document)
+      mimeType = "text/plain";
+      fileContent = `=====================================================
+          NEGT AUTHENTICITY ANALYSIS REPORT
+=====================================================
+Report Type: Technical Verification Report
+Model: Noise-Filtering Enhanced Graph Transformer v1.2
+Date: ${new Date().toLocaleString()}
+-----------------------------------------------------
+VERDICT: LIKELY FAKE (96.8% Confidence)
+RISK LEVEL: HIGH RISK
+-----------------------------------------------------
+TOPOLOGICAL PROFILE STATISTICS:
+- Total Propagation Nodes: 156
+- Total Connection Edges: 234
+- Structural Virality: 8.4/10
+-----------------------------------------------------
+KEY FINDINGS:
+1. Highly centralized propagation heavily dominated by bot nodes.
+2. Artificial viral spikes detected in early-stage engagement.
+3. Sourced from unverified clickbait networks.
+=====================================================`;
+    }
+
+    const blob = new Blob([fileContent], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    triggerToast('success', `File "${filename}" downloaded successfully.`);
   };
 
   const handlePrint = () => {
@@ -65,6 +158,7 @@ export default function ExportReporting({ onNavigate, triggerToast }) {
       return;
     }
     triggerToast('info', 'Opening printer layout...');
+    window.print();
   };
 
   return (

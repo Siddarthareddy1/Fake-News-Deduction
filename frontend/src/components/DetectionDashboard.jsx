@@ -12,6 +12,7 @@ export default function DetectionDashboard({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeStep, setAnalyzeStep] = useState(0);
   const [stats, setStats] = useState({ words: 0, sources: 0, mentions: 0 });
+  const [sampleIndex, setSampleIndex] = useState(0);
 
   const steps = [
     "Fetching source URL & metadata...",
@@ -51,6 +52,57 @@ export default function DetectionDashboard({
     triggerToast('info', 'Input cleared');
   };
 
+  const SAMPLE_ARTICLES = [
+    {
+      text: "Trump claims 100% of Obama's Syrian refugees are ISIS-affiliated in surprise social media address",
+      words: 1245,
+      sources: 3,
+      mentions: 23
+    },
+    {
+      text: "Taylor Swift announces surprise acoustic track during London show, breaking stadium attendance records and sending fans into frenzy.",
+      words: 850,
+      sources: 6,
+      mentions: 54
+    },
+    {
+      text: "SHOCKING REPORT: Brad Pitt and Angelina Jolie reuniting after private dinner in LA!!! Insider reports conspiracy to hide relationship exposed!!!",
+      words: 620,
+      sources: 1,
+      mentions: 89
+    },
+    {
+      text: "A recent academic study published in Nature scientific reports demonstrates a breakthrough in quantum silicon computing qubits verified by Stanford research team.",
+      words: 950,
+      sources: 8,
+      mentions: 12
+    },
+    {
+      text: "URGENT SECURITY ALERT!!! Conspiracy: Massive data leak exposes all national bank passwords online! Transfer all funds immediately before midnight!!!",
+      words: 510,
+      sources: 2,
+      mentions: 74
+    },
+    {
+      text: "Official press release confirms US Treasury inflation index dropped to 2.1% in the latest quarter, citing strong consumer spending data.",
+      words: 780,
+      sources: 5,
+      mentions: 18
+    },
+    {
+      text: "Conspiracy theory: Secret Mars mission base discovered by independent bloggers, claiming NASA is hiding alien contact evidence.",
+      words: 680,
+      sources: 2,
+      mentions: 43
+    },
+    {
+      text: "Unbelievable tech leak: Shocking secret exposed! Tech CEO using secret bot armies to boost stock price by 500% overnight!!!",
+      words: 490,
+      sources: 1,
+      mentions: 92
+    }
+  ];
+
   const handleAnalyze = () => {
     if (!inputText.trim()) {
       triggerToast('error', 'Please enter article text or a news URL');
@@ -69,51 +121,108 @@ export default function DetectionDashboard({
       } else {
         setIsAnalyzing(false);
         
-        // Formulate output based on content type
-        const isFakeInput = inputText.toLowerCase().includes('refugee') || 
-                            inputText.toLowerCase().includes('reunit') || 
-                            inputText.toLowerCase().includes('secret') || 
-                            inputText.toLowerCase().includes('rumor');
+        // Advanced heuristic news checker
+        const textLower = inputText.toLowerCase();
+        let score = 50; // default middle
+        const reasons = [];
 
-        const isRealInput = inputText.toLowerCase().includes('swift') || 
-                            inputText.toLowerCase().includes('economy') ||
-                            inputText.toLowerCase().includes('study') ||
-                            inputText.toLowerCase().includes('academic');
+        // Heuristic A: clickbait trigger words
+        const clickbaitWords = ['shocking', 'conspiracy', 'exposed', 'secret', 'miracle', 'leak', 'insider', 'rumor', 'unbelievable', 'breakout', 'disaster', 'urgent', 'alert', 'wonder'];
+        let clickbaitCount = 0;
+        clickbaitWords.forEach(word => {
+          if (textLower.includes(word)) clickbaitCount++;
+        });
+        if (clickbaitCount > 0) {
+          score -= clickbaitCount * 8;
+          reasons.push(`${clickbaitCount} sensationalist tags detected`);
+        }
 
-        let finalVerdict = 'REAL';
-        let confidence = 92.4;
-        let risk = 'LOW';
+        // Heuristic B: excessive shouting (all capitals)
+        const wordsList = inputText.trim().split(/\s+/);
+        const shoutingWords = wordsList.filter(w => w.length > 3 && w === w.toUpperCase());
+        if (shoutingWords.length / wordsList.length > 0.12) {
+          score -= 15;
+          reasons.push("Excessive capitalized words (sensationalist shouting)");
+        }
+
+        // Heuristic C: multiple exclamation marks
+        const exclamations = (inputText.match(/!/g) || []).length;
+        if (exclamations > 2) {
+          score -= Math.min(15, exclamations * 4);
+          reasons.push("High density of exclamation marks indicates emotional bias");
+        }
+
+        // Heuristic D: trustworthy citation vocabulary
+        const citationWords = ['research', 'scientific', 'official', 'published', 'data', 'university', 'study', 'spokesperson', 'reuters', 'associated press', 'verified', 'nature', 'nasa', 'treasury'];
+        let citationCount = 0;
+        citationWords.forEach(word => {
+          if (textLower.includes(word)) citationCount++;
+        });
+        if (citationCount > 0) {
+          score += citationCount * 6;
+          reasons.push(`Contains ${citationCount} professional citations`);
+        }
+
+        // Heuristic E: domain extensions
+        if (textLower.includes('.gov') || textLower.includes('.edu') || textLower.includes('reuters.com') || textLower.includes('apnews.com')) {
+          score += 20;
+          reasons.push("Referenced highly credible source domains (.gov, .edu)");
+        } else if (textLower.includes('.xyz') || textLower.includes('.cc') || textLower.includes('blogspot') || textLower.includes('forum')) {
+          score -= 20;
+          reasons.push("Contains suspicious link sources (.xyz, blogs)");
+        }
+
+        score = Math.max(8, Math.min(99, score));
+
+        let finalVerdict = 'UNCERTAIN';
+        let risk = 'MEDIUM';
         let keyFindings = [
-          'Organic peer-to-peer sharing network structure',
-          'Sourced from highly trusted, domain-verified roots',
-          'Zero suspicious bot-like propagation cascades'
+          'Mixed engagement containing both real and suspicious accounts',
+          'Origins tracing back to self-published blogging platforms',
+          reasons.length > 0 ? reasons[0] : 'Contains conflicting linguistic signals'
         ];
         
         let sampleNodes = [
           { id: 0, type: 'source', x: 150, y: 30, label: 'Source' },
-          { id: 1, type: 'user', x: 60, y: 90, label: 'User @verified' },
-          { id: 2, type: 'user', x: 150, y: 90, label: 'User @regular' },
-          { id: 3, type: 'user', x: 240, y: 90, label: 'User @news_feed' },
-          { id: 4, type: 'user', x: 30, y: 150, label: 'Subuser A' },
-          { id: 5, type: 'user', x: 90, y: 150, label: 'Subuser B' }
+          { id: 1, type: 'user', x: 80, y: 90, label: 'User A' },
+          { id: 2, type: 'bot', x: 220, y: 90, label: 'Bot B' }
         ];
 
         let sampleEdges = [
           { from: 0, to: 1, isNoisy: false },
-          { from: 0, to: 2, isNoisy: false },
-          { from: 0, to: 3, isNoisy: false },
-          { from: 1, to: 4, isNoisy: false },
-          { from: 1, to: 5, isNoisy: false }
+          { from: 0, to: 2, isNoisy: true }
         ];
 
-        if (isFakeInput) {
+        if (score >= 65) {
+          finalVerdict = 'REAL';
+          risk = 'LOW';
+          keyFindings = [
+            'Sourced from highly trusted, domain-verified roots',
+            'Organic peer-to-peer sharing network structure',
+            reasons.length > 0 ? reasons[0] : 'Low linguistic emotional bias detected'
+          ];
+          sampleNodes = [
+            { id: 0, type: 'source', x: 150, y: 30, label: 'Source' },
+            { id: 1, type: 'user', x: 60, y: 90, label: 'User @verified' },
+            { id: 2, type: 'user', x: 150, y: 90, label: 'User @regular' },
+            { id: 3, type: 'user', x: 240, y: 90, label: 'User @news_feed' },
+            { id: 4, type: 'user', x: 30, y: 150, label: 'Subuser A' },
+            { id: 5, type: 'user', x: 90, y: 150, label: 'Subuser B' }
+          ];
+          sampleEdges = [
+            { from: 0, to: 1, isNoisy: false },
+            { from: 0, to: 2, isNoisy: false },
+            { from: 0, to: 3, isNoisy: false },
+            { from: 1, to: 4, isNoisy: false },
+            { from: 1, to: 5, isNoisy: false }
+          ];
+        } else if (score <= 43) {
           finalVerdict = 'FAKE';
-          confidence = 96.8;
           risk = 'HIGH';
           keyFindings = [
             'Highly centralized propagation heavily dominated by bot nodes',
             'Artificial viral spikes detected in early-stage engagement',
-            'Sourced from unverified clickbait networks'
+            reasons.length > 0 ? reasons[0] : 'Sourced from unverified clickbait networks'
           ];
           sampleNodes = [
             { id: 0, type: 'source', x: 150, y: 30, label: 'Source' },
@@ -128,39 +237,20 @@ export default function DetectionDashboard({
             { from: 0, to: 3, isNoisy: true },
             { from: 1, to: 4, isNoisy: true }
           ];
-        } else if (!isRealInput) {
-          // Mixed input / uncertain
-          finalVerdict = 'UNCERTAIN';
-          confidence = 58.2;
-          risk = 'MEDIUM';
-          keyFindings = [
-            'Mixed engagement containing both real and suspicious accounts',
-            'Origins tracing back to self-published blogging platforms',
-            'Further verification recommended for content claims'
-          ];
-          sampleNodes = [
-            { id: 0, type: 'source', x: 150, y: 30, label: 'Source' },
-            { id: 1, type: 'user', x: 80, y: 90, label: 'User A' },
-            { id: 2, type: 'bot', x: 220, y: 90, label: 'Bot B' }
-          ];
-          sampleEdges = [
-            { from: 0, to: 1, isNoisy: false },
-            { from: 0, to: 2, isNoisy: true }
-          ];
         }
 
         setAnalysisResult({
           text: inputText,
           verdict: finalVerdict,
-          confidence,
+          confidence: score,
           risk,
           date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
           processingTime: '2.1s',
           model: 'NEGT v1.2',
           keyFindings,
           stats: {
-            nodes: isFakeInput ? 156 : isRealInput ? 180 : 86,
-            edges: isFakeInput ? 234 : isRealInput ? 312 : 94,
+            nodes: score <= 43 ? 156 : score >= 65 ? 180 : 86,
+            edges: score <= 43 ? 234 : score >= 65 ? 312 : 94,
             words: stats.words,
             sources: stats.sources,
             mentions: stats.mentions
@@ -177,9 +267,11 @@ export default function DetectionDashboard({
   };
 
   const loadDemoClick = () => {
-    setInputText("Trump claims 100% of Obama's Syrian refugees are ISIS-affiliated in surprise social media address");
-    setStats({ words: 1245, sources: 3, mentions: 23 });
-    triggerToast('info', 'Loaded demo payload');
+    const sample = SAMPLE_ARTICLES[sampleIndex];
+    setInputText(sample.text);
+    setStats({ words: sample.words, sources: sample.sources, mentions: sample.mentions });
+    setSampleIndex((prev) => (prev + 1) % SAMPLE_ARTICLES.length);
+    triggerToast('info', `Loaded news sample #${sampleIndex + 1} of ${SAMPLE_ARTICLES.length}`);
   };
 
   return (
