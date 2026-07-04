@@ -84,305 +84,134 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
 
     if (format === 'pdf') {
       try {
-        const doc = new jsPDF();
-        let pageNum = 1;
-        const totalPages = 1 + 
-          (sections.propagation ? 1 : 0) + 
-          (sections.noise ? 1 : 0) + 
-          (sections.attribution ? 1 : 0) + 
-          (sections.metrics ? 1 : 0);
-        
-        // ---------------- PAGE 1: Summary ----------------
-        // Report Header
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(22);
-        doc.setTextColor(24, 95, 165); // Palette A primary blue
-        doc.text("NEGT Fake News Authenticity Report", 20, 25);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(100, 116, 139);
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 32);
-        doc.text(`Engine: Noise-Filtering Enhanced Graph Transformer v1.2`, 20, 37);
-        
-        doc.setLineWidth(0.5);
-        doc.setDrawColor(226, 232, 240);
-        doc.line(20, 42, 190, 42);
-        
-        // Article text section
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Analyzed Article Content:", 20, 52);
-        
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        
-        // Wrap text to fit page
-        const splitText = doc.splitTextToSize(result.text || "No news text provided.", 170);
-        doc.text(splitText, 20, 58);
-        
-        const textHeight = splitText.length * 5;
-        let nextY = 58 + textHeight + 10;
-        
-        doc.setLineWidth(0.5);
-        doc.setDrawColor(226, 232, 240);
-        doc.line(20, nextY - 5, 190, nextY - 5);
-        
-        // Verdict Card
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(14);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Verification Verdict:", 20, nextY);
-        
-        // Verdict Badge
-        let badgeColor = [99, 153, 34]; // Green for Real
-        if (result.verdict === 'FAKE') {
-          badgeColor = [163, 45, 45]; // Red for Fake
-        } else if (result.verdict === 'UNCERTAIN') {
-          badgeColor = [186, 117, 23]; // Amber for Uncertain
-        }
-        
-        doc.setFillColor(...badgeColor);
-        doc.rect(20, nextY + 4, 170, 16, "F");
-        
-        doc.setTextColor(255, 255, 255);
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.text(`${finalVerdictText} (${confidenceText} Confidence) - ${riskText}`, 25, nextY + 14);
-        
-        nextY += 30;
-        
-        // Key Findings
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Key Analytical Findings:", 20, nextY);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        
-        result.keyFindings.forEach((finding, idx) => {
-          doc.text(`- ${finding}`, 22, nextY + 7 + (idx * 6));
-        });
-        
-        // Footer Page 1
-        doc.setFontSize(8);
-        doc.setTextColor(148, 163, 184);
-        doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
-
-        // ---------------- PAGE 2: Propagation Analytics ----------------
-        if (sections.propagation) {
-          doc.addPage();
-          pageNum++;
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(16);
-          doc.setTextColor(24, 95, 165);
-          doc.text("Section 1: Propagation Analytics", 20, 25);
-          
-          doc.setDrawColor(226, 232, 240);
-          doc.line(20, 30, 190, 30);
-          
-          // Topological metrics
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Cascade Depth Summary:", 20, 42);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          doc.text(`Max Propagation Hops: ${isFake ? '4 Hops' : '5 Hops'}`, 25, 50);
-          doc.text(`Average Breadth: ${isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}`, 25, 56);
-          doc.text(`Structural Virality Score: ${isFake ? '8.4/10 (High)' : '2.1/10 (Low)'}`, 25, 62);
-          doc.text(`Clustering Coefficient: ${isFake ? '0.64' : '0.12'}`, 25, 68);
-          
-          // Source distribution
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Source Domain Referencing Distribution:", 20, 82);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          doc.text(`Verified Press: ${isFake ? '14%' : '64%'}`, 25, 90);
-          doc.text(`Social Networks: ${isFake ? '62%' : '25%'}`, 25, 96);
-          doc.text(`Blogs / Self-Published Domains: ${isFake ? '24%' : '11%'}`, 25, 102);
-          
-          // Sentiment profile
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("User Sentiment Profile Summary:", 20, 116);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          doc.text(`Sentiment Verdict: ${isFake ? 'Sensationalist & biased outrage pattern' : 'Informative & authentic citation pattern'}`, 25, 124);
-          doc.text("Emotional Distribution: ", 25, 130);
-          doc.text(`- Angry / Hostile: ${isFake ? '58%' : '12%'}`, 30, 136);
-          doc.text(`- Skeptical: ${isFake ? '34%' : '24%'}`, 30, 142);
-          doc.text(`- Trusting: ${isFake ? '8%' : '64%'}`, 30, 148);
-          
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
+        // We use client-side capture with html2canvas to guarantee exact pixel parity 
+        // with the visually detailed dashboard, embedding all custom graphs, charts, tables, and colors.
+        const detailedContainer = document.querySelector('.detailed-analysis-container');
+        if (!detailedContainer) {
+          triggerToast('error', 'Detailed analysis layout element not found. Please click View Full Report first.');
+          return;
         }
 
-        // ---------------- PAGE 3: Noise Analysis ----------------
-        if (sections.noise) {
-          doc.addPage();
-          pageNum++;
+        // Import html2canvas dynamically if not already globally available
+        import('html2canvas').then(async ({ default: html2canvas }) => {
+          const toastId = triggerToast('info', 'Capturing full layout views and embedding GNN graphs...');
           
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(16);
-          doc.setTextColor(24, 95, 165);
-          doc.text("Section 2: Noise Analysis (Denoising)", 20, 25);
-          
-          doc.setDrawColor(226, 232, 240);
-          doc.line(20, 30, 190, 30);
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Graph Information Bottleneck (GIB) Denoising Summary:", 20, 42);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          doc.text(`Suspicious Patterns Detected: ${isFake ? '7' : '1'}`, 25, 50);
-          doc.text(`Bot-like Activity Rating: ${isFake ? '42%' : '4%'}`, 25, 56);
-          doc.text(`Anomalous Links / Clickbaits: ${isFake ? '3' : '0'}`, 25, 62);
-          doc.text(`Noise Filtering Score (GIB): ${isFake ? '89%' : '98%'}`, 25, 68);
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Information Bottleneck Denoising Mechanism:", 20, 82);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          const splitExplanation = doc.splitTextToSize("Standard GNNs are highly susceptible to 'structural noise' – thousands of random retweeters drowning out the early credibility patterns. Our model introduces a Graph Information Bottleneck that regularizes representation learning. It compresses the input graph structures, pruning irrelevant nodes (with up to 89% precision) and leaving a high-fidelity diagnostic backbone.", 170);
-          doc.text(splitExplanation, 20, 88);
-          
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
-        }
+          // Render full container
+          const canvas = await html2canvas(detailedContainer, {
+            scale: 2, // High resolution scaling
+            useCORS: true,
+            backgroundColor: '#fcf6f1', // Matches warm cream theme background
+            logging: false
+          });
 
-        // ---------------- PAGE 4: Feature Attribution ----------------
-        if (sections.attribution) {
-          doc.addPage();
-          pageNum++;
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+          const doc = new jsPDF('p', 'mm', 'a4');
           
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(16);
-          doc.setTextColor(24, 95, 165);
-          doc.text("Section 3: Feature Attribution", 20, 25);
-          
-          doc.setDrawColor(226, 232, 240);
-          doc.line(20, 30, 190, 30);
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("GNN Feature Attribution Weights:", 20, 42);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          doc.text(`Early User Credibility: ${isFake ? '23%' : '29%'}`, 25, 50);
-          doc.text(`Source Domain Trust: ${isFake ? '19%' : '35%'}`, 25, 56);
-          doc.text(`Engagement Velocity: ${isFake ? '18%' : '8%'}`, 25, 62);
-          doc.text(`Propagation Diversity: ${isFake ? '15%' : '18%'}`, 25, 68);
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Methodological Description:", 20, 82);
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          const splitExplanationAttr = doc.splitTextToSize("Feature attributions highlight which network signals the Graph Neural Network prioritized. Higher weights reflect features that contributed most heavily towards classification. For organic posts, Domain Trust is dominant, whereas Velocity and bot clusters govern fake news indicators.", 170);
-          doc.text(splitExplanationAttr, 20, 88);
-          
-          doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
-        }
+          const imgWidth = 210; // A4 size width
+          const pageHeight = 297; // A4 size height
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          let heightLeft = imgHeight;
+          let position = 0;
 
-        // ---------------- PAGE 5: Detailed Metrics ----------------
-        if (sections.metrics) {
-          doc.addPage();
-          pageNum++;
-          
+          // Page 1: Premium Title Page with Color-Coded Verdict Badges
+          doc.setFillColor(254, 245, 231); // Warm Cream cover page color
+          doc.rect(0, 0, 210, 297, 'F');
+
+          // Premium Border
+          doc.setDrawColor(232, 223, 213);
+          doc.setLineWidth(2);
+          doc.rect(10, 10, 190, 277);
+
+          // Title & Meta
           doc.setFont("helvetica", "bold");
-          doc.setFontSize(16);
-          doc.setTextColor(24, 95, 165);
-          doc.text("Section 4: Detailed Metrics", 20, 25);
-          
-          doc.setDrawColor(226, 232, 240);
-          doc.line(20, 30, 190, 30);
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Technical Performance Evaluation Metrics:", 20, 42);
-          
+          doc.setFontSize(26);
+          doc.setTextColor(30, 41, 59);
+          doc.text("NEGT Fake News Verification", 20, 60);
+          doc.text("Authenticity Report", 20, 72);
+
           doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(51, 65, 85);
-          
-          doc.text("Metric Name", 20, 52);
-          doc.text("Score", 80, 52);
-          doc.text("Benchmark Avg.", 115, 52);
-          doc.text("Assessment", 155, 52);
-          
-          doc.setLineWidth(0.3);
-          doc.line(20, 54, 190, 54);
-          
-          doc.text("Classification Accuracy", 20, 60);
-          doc.text("94.2%", 80, 60);
-          doc.text("85.1%", 115, 60);
-          doc.text("Excellent (+9.1% gain)", 155, 60);
-          
-          doc.text("Noise Robustness (GIB)", 20, 66);
-          doc.text("8.7/10", 80, 66);
-          doc.text("5.2/10", 115, 66);
-          doc.text("Highly Resistant", 155, 66);
-          
-          doc.text("Interpretability Score", 20, 72);
-          doc.text("9.1/10", 80, 72);
-          doc.text("6.0/10", 115, 72);
-          doc.text("Explainable Attention", 155, 72);
-          
-          doc.text("Inference Latency", 20, 78);
-          doc.text("0.8s", 80, 78);
-          doc.text("1.6s", 115, 78);
-          doc.text("Low overhead", 155, 78);
-          
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(12);
-          doc.setTextColor(15, 23, 42);
-          doc.text("Model Hyperparameters Configuration:", 20, 94);
-          
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(9);
+          doc.setFontSize(11);
           doc.setTextColor(100, 116, 139);
-          doc.text("Layers: 4 transformer blocks | Heads: 8 divided partitions | GIB Bottleneck Ratio: 0.15 | Noise Scale: 0.05", 20, 100);
+          doc.text(`Engine: Noise-Filtering Enhanced Graph Transformer v1.2`, 20, 85);
+          doc.text(`Report ID: NEGT-VR-${Math.floor(100000 + Math.random() * 900000)}`, 20, 91);
+          doc.text(`Generated Date: ${new Date().toLocaleString()}`, 20, 97);
 
+          // Divider line
+          doc.setDrawColor(13, 110, 253);
+          doc.setLineWidth(1.5);
+          doc.line(20, 108, 190, 108);
+
+          // Verification Verdict Callout
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(14);
+          doc.setTextColor(30, 41, 59);
+          doc.text("VERIFICATION VERDICT", 20, 128);
+
+          // Color Badge
+          let verdictColor = [76, 175, 80]; // Green
+          if (result.verdict === 'FAKE') {
+            verdictColor = [244, 67, 54]; // Red
+          } else if (result.verdict === 'UNCERTAIN') {
+            verdictColor = [255, 152, 0]; // Orange
+          }
+          doc.setFillColor(...verdictColor);
+          doc.rect(20, 135, 170, 24, 'F');
+
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(16);
+          doc.text(`${finalVerdictText} (${confidenceText} Confidence)`, 26, 151);
+
+          // Document Guidelines info
+          doc.setTextColor(71, 85, 105);
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          const introTxt = doc.splitTextToSize("This assessment verifies early user cascading behaviors, topological graph features, and clickbait anomalies using the Graph Information Bottleneck neural architecture. A complete visualization of the propagation timeline and denoising metrics is provided in the subsequent sections of this document.", 170);
+          doc.text(introTxt, 20, 185);
+
+          // Cover Footer
           doc.setFontSize(8);
-          doc.setTextColor(148, 163, 184);
-          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
-        }
-        
-        const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.pdf`;
-        doc.save(filename);
-        triggerToast('success', `Direct PDF report "${filename}" downloaded successfully.`);
+          doc.setTextColor(131, 146, 165);
+          doc.text("CONFIDENTIAL | FOR VERIFICATION PURPOSES ONLY", 20, 275);
+          doc.text("Page 1 of 5", 170, 275);
+
+          // Append captured screen contents page-by-page
+          let reportPageNum = 2;
+          const totalReportPages = Math.ceil(imgHeight / pageHeight) + 1;
+
+          while (heightLeft > 0) {
+            doc.addPage();
+            // Background Warm Cream
+            doc.setFillColor(252, 246, 241);
+            doc.rect(0, 0, 210, 297, 'F');
+            
+            // Header
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(8);
+            doc.setTextColor(131, 146, 165);
+            doc.text("NEGT VERIFICATION REPORT SUMMARY", 20, 12);
+            doc.line(20, 14, 190, 14);
+
+            // Capture Slice
+            doc.addImage(imgData, 'JPEG', 0, position + 18, imgWidth, imgHeight);
+
+            // Footer
+            doc.line(20, 283, 190, 283);
+            doc.setFont("helvetica", "normal");
+            doc.text(`NEGT Analyzer v1.2`, 20, 288);
+            doc.text(`Page ${reportPageNum} of ${totalReportPages}`, 172, 288);
+
+            position -= pageHeight - 16;
+            heightLeft -= pageHeight - 16;
+            reportPageNum++;
+          }
+
+          const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.pdf`;
+          doc.save(filename);
+          triggerToast('success', `Direct PDF report "${filename}" downloaded successfully with all active graphs.`);
+        }).catch(err => {
+          console.error(err);
+          triggerToast('error', 'Failed to load report capture libraries.');
+        });
       } catch (err) {
         console.error(err);
         triggerToast('error', 'Failed to generate direct PDF file.');

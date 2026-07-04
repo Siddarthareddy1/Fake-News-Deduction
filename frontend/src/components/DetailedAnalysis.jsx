@@ -176,47 +176,47 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
                 </p>
               </div>
 
-              {/* 2. Source Distribution Donut Chart */}
+               {/* 2. Source Distribution Donut Chart */}
               <div className="chart-card-sub glass-panel">
-                <h4>Source Distribution (Pie Chart)</h4>
-                <p className="chart-subtitle">Category ratios of referencing domains</p>
+                <h4>Source Domain Referencing (Donut Chart)</h4>
+                <p className="chart-subtitle">Domain categories ratios</p>
                 <div className="donut-chart-layout">
                   <div className="donut-graphic">
                     <svg viewBox="0 0 100 100" width="100" height="100">
                       {isFake ? (
                         <>
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10172a" strokeWidth="12" />
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--secondary-teal)" strokeWidth="12" strokeDasharray="37 251" strokeDashoffset="0" />
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--primary-blue)" strokeWidth="12" strokeDasharray="155 251" strokeDashoffset="-37" />
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--accent-coral)" strokeWidth="12" strokeDasharray="59 251" strokeDashoffset="-192" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#e2d9cf" strokeWidth="10" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#4CAF50" strokeWidth="10" strokeDasharray="35 251" strokeDashoffset="0" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#0D6EFD" strokeWidth="10" strokeDasharray="155 251" strokeDashoffset="-35" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#F44336" strokeWidth="10" strokeDasharray="61 251" strokeDashoffset="-190" />
                         </>
                       ) : (
                         <>
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10172a" strokeWidth="12" />
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--secondary-teal)" strokeWidth="12" strokeDasharray="160 251" strokeDashoffset="0" />
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--primary-blue)" strokeWidth="12" strokeDasharray="63 251" strokeDashoffset="-160" />
-                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="var(--accent-coral)" strokeWidth="12" strokeDasharray="28 251" strokeDashoffset="-223" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#e2d9cf" strokeWidth="10" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#4CAF50" strokeWidth="10" strokeDasharray="160 251" strokeDashoffset="0" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#0D6EFD" strokeWidth="10" strokeDasharray="63 251" strokeDashoffset="-160" />
+                          <circle cx="50" cy="50" r="40" fill="transparent" stroke="#F44336" strokeWidth="10" strokeDasharray="28 251" strokeDashoffset="-223" />
                         </>
                       )}
-                      <circle cx="50" cy="50" r="30" fill="var(--slate-800)" />
-                      <text x="50" y="54" textAnchor="middle" fill="#ffffff" fontSize="8" fontWeight="bold">
-                        {isFake ? "Bot Net" : "Organic"}
+                      <circle cx="50" cy="50" r="32" fill="#fff" />
+                      <text x="50" y="53" textAnchor="middle" fill="#1e293b" fontSize="6.5" fontWeight="bold">
+                        {isFake ? "Bot Heavy" : "Credible"}
                       </text>
                     </svg>
                   </div>
                   <div className="donut-legend">
                     <div className="legend-item">
-                      <span className="dot teal"></span>
+                      <span className="dot" style={{backgroundColor: '#4CAF50'}}></span>
                       <span className="lbl">Verified Press</span>
                       <span className="val">{isFake ? '14%' : '64%'}</span>
                     </div>
                     <div className="legend-item">
-                      <span className="dot blue"></span>
-                      <span className="lbl">Social Networks</span>
+                      <span className="dot" style={{backgroundColor: '#0D6EFD'}}></span>
+                      <span className="lbl">Social Nets</span>
                       <span className="val">{isFake ? '62%' : '25%'}</span>
                     </div>
                     <div className="legend-item">
-                      <span className="dot coral"></span>
+                      <span className="dot" style={{backgroundColor: '#F44336'}}></span>
                       <span className="lbl">Blogs / Other</span>
                       <span className="val">{isFake ? '24%' : '11%'}</span>
                     </div>
@@ -224,71 +224,57 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
                 </div>
               </div>
 
-              {/* 3. Sentiment Dial */}
+              {/* 3. Cascade Depth & Breadth Bar Chart */}
               <div className="chart-card-sub glass-panel">
-                <h4>User Sentiment Analysis (Gauge)</h4>
-                <p className="chart-subtitle">Aggregate emotional response distribution</p>
-                <div className="sentiment-dial-layout flex-col-center">
-                  <svg viewBox="0 0 200 120" width="100%" height="100">
-                    <defs>
-                      <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="var(--status-fake)" />
-                        <stop offset="50%" stopColor="var(--status-uncertain)" />
-                        <stop offset="100%" stopColor="var(--status-real)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="#1e293b" strokeWidth="16" strokeLinecap="round" />
-                    <path d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="url(#gauge-grad)" strokeWidth="16" strokeLinecap="round" />
-                    
-                    {isFake ? (
-                      <line x1="100" y1="100" x2="45" y2="55" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" />
-                    ) : isUncertain ? (
-                      <line x1="100" y1="100" x2="100" y2="20" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" />
-                    ) : (
-                      <line x1="100" y1="100" x2="155" y2="55" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" />
-                    )}
-                    <circle cx="100" cy="100" r="8" fill="#ffffff" />
-                    
-                    <text x="35" y="115" fill="var(--status-fake)" fontSize="9" fontWeight="bold">Angry/Hostile</text>
-                    <text x="100" y="115" fill="var(--status-uncertain)" fontSize="9" fontWeight="bold" textAnchor="middle">Skeptical</text>
-                    <text x="165" y="115" fill="var(--status-real)" fontSize="9" fontWeight="bold" textAnchor="end">Trusting</text>
+                <h4>Cascade Depth & Breadth (Bar Chart)</h4>
+                <p className="chart-subtitle">Cascade propagation metrics</p>
+                <div className="bar-chart-visual mt-4">
+                  <svg viewBox="0 0 200 100" width="100%" height="90">
+                    {/* Hops */}
+                    <text x="10" y="25" fill="#475569" fontSize="8" fontWeight="bold">Max Hops</text>
+                    <rect x="70" y="16" width={isFake ? "80" : "100"} height="12" fill="#0D6EFD" rx="3" />
+                    <text x={isFake ? "155" : "175"} y="25" fill="#1e293b" fontSize="8" fontWeight="bold">{isFake ? '4' : '5'}</text>
+
+                    {/* Average Breadth */}
+                    <text x="10" y="50" fill="#475569" fontSize="8" fontWeight="bold">Avg Breadth</text>
+                    <rect x="70" y="41" width={isFake ? "120" : "40"} height="12" fill="#FF9800" rx="3" />
+                    <text x={isFake ? "195" : "115"} y="50" fill="#1e293b" fontSize="8" fontWeight="bold">{isFake ? '11.2' : '3.6'}</text>
+
+                    {/* Virality */}
+                    <text x="10" y="75" fill="#475569" fontSize="8" fontWeight="bold">Virality Score</text>
+                    <rect x="70" y="66" width={isFake ? "95" : "30"} height="12" fill="#00A8E8" rx="3" />
+                    <text x={isFake ? "170" : "105"} y="75" fill="#1e293b" fontSize="8" fontWeight="bold">{isFake ? '8.4' : '2.1'}</text>
                   </svg>
-                  <p className="sentiment-verdict-desc text-center mt-2">
-                    <strong>Sentiment Verdict:</strong> {isFake ? "Sensationalist & biased outrage pattern" : "Informative & authentic citation pattern"}
-                  </p>
                 </div>
               </div>
 
-              {/* 4. Cascade Depth Summary */}
-              <div className="chart-card-sub glass-panel flex-col-center">
-                <h4>Cascade Depth Summary</h4>
-                <p className="chart-subtitle">Tree topological metrics</p>
-                <div className="cascade-depth-visual w-full">
-                  <div className="metric-row">
-                    <span className="lbl">Max Propagation Hops</span>
-                    <span className="val color-teal">{isFake ? '4 Hops' : '5 Hops'}</span>
+              {/* 4. Emotional Distribution Stacked Bar */}
+              <div className="chart-card-sub glass-panel">
+                <h4>User Emotional Distribution (Stacked Bar)</h4>
+                <p className="chart-subtitle">Aggregate emotional response ratios</p>
+                <div className="stacked-bar-container mt-6">
+                  <div className="stacked-bar-track" style={{ display: 'flex', height: '24px', borderRadius: '6px', overflow: 'hidden' }}>
+                    <div style={{ width: isFake ? '58%' : '12%', backgroundColor: '#F44336', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '9px', fontWeight: 'bold' }}>
+                      {isFake ? '58%' : '12%'}
+                    </div>
+                    <div style={{ width: isFake ? '34%' : '24%', backgroundColor: '#FF9800', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '9px', fontWeight: 'bold' }}>
+                      {isFake ? '34%' : '24%'}
+                    </div>
+                    <div style={{ width: isFake ? '8%' : '64%', backgroundColor: '#4CAF50', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '9px', fontWeight: 'bold' }}>
+                      {isFake ? '8%' : '64%'}
+                    </div>
                   </div>
-                  <div className="metric-row">
-                    <span className="lbl">Average Breadth</span>
-                    <span className="val color-coral">{isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}</span>
-                  </div>
-                  <div className="metric-row">
-                    <span className="lbl">Structural Virality Score</span>
-                    <span className="val color-blue">{isFake ? '8.4/10 (High)' : '2.1/10 (Low)'}</span>
-                  </div>
-                  <div className="metric-row">
-                    <span className="lbl">Clustering Coefficient</span>
-                    <span className="val">{isFake ? '0.64' : '0.12'}</span>
+                  <div className="stacked-bar-legend mt-4" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#475569' }}>
+                    <span>🔴 Angry/Hostile</span>
+                    <span>🟡 Skeptical</span>
+                    <span>🟢 Trusting</span>
                   </div>
                 </div>
-                <p className="chart-footer-text mt-4">
-                  {isFake ? "⚠️ Extremely wide breadth indicates bot broadcast hubs." : "✓ Deep organic chaining indicates normal reader retweeting."}
-                </p>
               </div>
             </div>
           </div>
 
-          <div className="section-divider mt-12 mb-8" style={{ borderTop: '1px solid #1e293b' }}></div>
+          <div className="section-divider mt-12 mb-8" style={{ borderTop: '1px solid #e8dfd5' }}></div>
 
           {/* SECTION 2: Noise Analysis */}
           <div id="noise-section" className="tab-pane noise-pane animate-fade-in scroll-mt-20">
@@ -298,28 +284,54 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
             </div>
 
             <div className="noise-metrics-grid mt-6">
-              <div className="noise-metric-card glass-panel">
-                <span className="score-num color-fake">{isFake ? '7' : '1'}</span>
-                <span className="score-label">Suspicious Patterns Detected</span>
-                <p className="score-desc">Spurious tweet velocity spikes, bot-ring clusters, or repetitive link spam.</p>
+              {/* Radial Gauge for Noise Filtering Score */}
+              <div className="noise-metric-card glass-panel highlight-teal" style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '24px' }}>
+                <div style={{ width: '80px', height: '80px' }}>
+                  <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#e2d9cf" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#4CAF50" strokeWidth="8" strokeDasharray={isFake ? "223 251" : "246 251"} strokeLinecap="round" transform="rotate(-90 50 50)" />
+                    <text x="50" y="55" textAnchor="middle" fill="#1e293b" fontSize="11" fontWeight="bold">
+                      {isFake ? '89%' : '98%'}
+                    </text>
+                  </svg>
+                </div>
+                <div>
+                  <span className="score-label" style={{ fontSize: '15px', fontWeight: 'bold' }}>GIB Noise Filtering Score</span>
+                  <p className="score-desc" style={{ marginTop: '4px' }}>Percentage of irrelevant social noise filtered by the Graph Information Bottleneck.</p>
+                </div>
               </div>
 
-              <div className="noise-metric-card glass-panel">
-                <span className="score-num color-uncertain">{isFake ? '42%' : '4%'}</span>
-                <span className="score-label">Bot-like Activity Rating</span>
-                <p className="score-desc">Likelihood that early-stage retweeters are automated bots.</p>
-              </div>
+              {/* Small Bar Chart for patterns */}
+              <div className="noise-metric-card glass-panel" style={{ gridColumn: 'span 2' }}>
+                <h4>Suspicious Patterns & Bot Activity Summary</h4>
+                <div style={{ marginTop: '12px' }}>
+                  {/* Suspicious Patterns */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#475569', marginBottom: '4px' }}>
+                    <span>Suspicious Patterns Detected</span>
+                    <span style={{ fontWeight: 'bold' }}>{isFake ? '7' : '1'}</span>
+                  </div>
+                  <div style={{ height: '8px', backgroundColor: '#e2d9cf', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
+                    <div style={{ width: isFake ? '70%' : '10%', height: '100%', backgroundColor: '#F44336' }}></div>
+                  </div>
 
-              <div className="noise-metric-card glass-panel">
-                <span className="score-num">{isFake ? '3' : '0'}</span>
-                <span className="score-label">Anomalous Links / Clickbaits</span>
-                <p className="score-desc">Links routing readers to domains with poor historical credibility.</p>
-              </div>
+                  {/* Bot Activity Rating */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#475569', marginBottom: '4px' }}>
+                    <span>Bot-like Activity Rating</span>
+                    <span style={{ fontWeight: 'bold' }}>{isFake ? '42%' : '4%'}</span>
+                  </div>
+                  <div style={{ height: '8px', backgroundColor: '#e2d9cf', borderRadius: '4px', overflow: 'hidden', marginBottom: '12px' }}>
+                    <div style={{ width: isFake ? '42%' : '4%', height: '100%', backgroundColor: '#FF9800' }}></div>
+                  </div>
 
-              <div className="noise-metric-card glass-panel highlight-teal">
-                <span className="score-num color-real">{isFake ? '89%' : '98%'}</span>
-                <span className="score-label">Noise Filtering Score (GIB)</span>
-                <p className="score-desc">Percentage of irrelevant social noise filtered by the Graph Information Bottleneck.</p>
+                  {/* Anomalous Links */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#475569', marginBottom: '4px' }}>
+                    <span>Anomalous Links / Clickbaits</span>
+                    <span style={{ fontWeight: 'bold' }}>{isFake ? '3' : '0'}</span>
+                  </div>
+                  <div style={{ height: '8px', backgroundColor: '#e2d9cf', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: isFake ? '60%' : '0%', height: '100%', backgroundColor: '#0D6EFD' }}></div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -343,60 +355,84 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
               <p className="text-secondary text-xs mt-1">Weight contribution of different GNN structural signals toward the final verdict classification.</p>
             </div>
 
-            <div className="attribution-bars-container mt-6">
-              <div className="attribution-row">
-                <div className="attr-meta">
-                  <span className="title">Early User Credibility</span>
-                  <span className="pct">{isFake ? '23%' : '29%'}</span>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill teal" style={{ width: isFake ? '23%' : '29%' }}></div>
-                </div>
-                <p className="attr-desc">Evaluation of the historical verification status of accounts interacting within the first hour.</p>
-              </div>
+            <div className="chart-card-sub glass-panel mt-6" style={{ padding: '20px' }}>
+              <h4>GNN Structural Weights Rank (Horizontal Bar Chart)</h4>
+              <p className="chart-subtitle">Prioritized signals for cascade classification</p>
+              <div className="svg-chart-container mt-4">
+                <svg viewBox="0 0 400 160" width="100%" height="160" className="svg-element">
+                  {/* Bar 1: Early User Credibility */}
+                  <text x="10" y="25" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Early User Credibility</text>
+                  <rect x="140" y="14" width={isFake ? "92" : "116"} height="16" fill="#0D6EFD" rx="4" />
+                  <text x={isFake ? "242" : "266"} y="26" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '23%' : '29%'}</text>
 
-              <div className="attribution-row">
-                <div className="attr-meta">
-                  <span className="title">Source Domain Trust</span>
-                  <span className="pct">{isFake ? '19%' : '35%'}</span>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill blue" style={{ width: isFake ? '19%' : '35%' }}></div>
-                </div>
-                <p className="attr-desc">Credibility score of the root news publishing domain (e.g. PolitiFact rating, domain age).</p>
-              </div>
+                  {/* Bar 2: Source Domain Trust */}
+                  <text x="10" y="60" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Source Domain Trust</text>
+                  <rect x="140" y="49" width={isFake ? "76" : "140"} height="16" fill="#00A8E8" rx="4" />
+                  <text x={isFake ? "226" : "290"} y="61" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '19%' : '35%'}</text>
 
-              <div className="attribution-row">
-                <div className="attr-meta">
-                  <span className="title">Engagement Velocity</span>
-                  <span className="pct">{isFake ? '18%' : '8%'}</span>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill coral" style={{ width: isFake ? '18%' : '8%' }}></div>
-                </div>
-                <p className="attr-desc">The speed at which the news spreads in the initial cascade hops.</p>
-              </div>
+                  {/* Bar 3: Engagement Velocity */}
+                  <text x="10" y="95" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Engagement Velocity</text>
+                  <rect x="140" y="84" width={isFake ? "72" : "32"} height="16" fill="#FF9800" rx="4" />
+                  <text x={isFake ? "222" : "182"} y="96" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '18%' : '8%'}</text>
 
-              <div className="attribution-row">
-                <div className="attr-meta">
-                  <span className="title">Propagation Diversity</span>
-                  <span className="pct">{isFake ? '15%' : '18%'}</span>
-                </div>
-                <div className="bar-track">
-                  <div className="bar-fill" style={{ width: isFake ? '15%' : '18%', backgroundColor: '#64748b' }}></div>
-                </div>
-                <p className="attr-desc">Measures the breadth across distinct communities and clusters rather than a single spam ring.</p>
+                  {/* Bar 4: Propagation Diversity */}
+                  <text x="10" y="130" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Propagation Diversity</text>
+                  <rect x="140" y="119" width={isFake ? "60" : "72"} height="16" fill="#4CAF50" rx="4" />
+                  <text x={isFake ? "210" : "222"} y="131" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '15%' : '18%'}</text>
+                </svg>
               </div>
             </div>
           </div>
 
-          <div className="section-divider mt-12 mb-8" style={{ borderTop: '1px solid #1e293b' }}></div>
+          <div className="section-divider mt-12 mb-8" style={{ borderTop: '1px solid #e8dfd5' }}></div>
 
           {/* SECTION 4: Detailed Metrics */}
           <div id="metrics-section" className="tab-pane metrics-pane animate-fade-in scroll-mt-20">
             <div className="tab-panel-header">
               <h3>📋 Technical Performance Evaluation Metrics</h3>
               <p className="text-secondary text-xs mt-1">Operational benchmark scores for model evaluation.</p>
+            </div>
+
+            <div className="chart-card-sub glass-panel mt-6" style={{ padding: '20px' }}>
+              <h4>Model Score vs. Benchmark Avg. (Grouped Bar Chart)</h4>
+              <p className="chart-subtitle">Comparative performance against standard GNN baselines</p>
+              <div className="svg-chart-container mt-4">
+                <svg viewBox="0 0 500 220" width="100%" height="220" className="svg-element">
+                  {/* Legend */}
+                  <rect x="300" y="10" width="12" height="12" fill="#0D6EFD" rx="2" />
+                  <text x="318" y="20" fill="var(--text-primary)" fontSize="9" fontWeight="bold">NEGT Model Score</text>
+                  <rect x="410" y="10" width="12" height="12" fill="#8392a5" rx="2" />
+                  <text x="428" y="20" fill="var(--text-primary)" fontSize="9" fontWeight="bold">Benchmark Avg.</text>
+
+                  {/* Metric 1: Accuracy */}
+                  <text x="10" y="50" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Classification Accuracy</text>
+                  <rect x="180" y="38" width="188" height="10" fill="#0D6EFD" rx="2" />
+                  <rect x="180" y="50" width="170" height="10" fill="#8392a5" rx="2" />
+                  <text x="380" y="47" fill="#0D6EFD" fontSize="9" fontWeight="bold">94.2%</text>
+                  <text x="380" y="59" fill="#8392a5" fontSize="9">85.1%</text>
+
+                  {/* Metric 2: Noise Robustness */}
+                  <text x="10" y="95" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Noise Robustness (GIB)</text>
+                  <rect x="180" y="83" width="174" height="10" fill="#0D6EFD" rx="2" />
+                  <rect x="180" y="95" width="104" height="10" fill="#8392a5" rx="2" />
+                  <text x="380" y="92" fill="#0D6EFD" fontSize="9" fontWeight="bold">8.7/10</text>
+                  <text x="380" y="104" fill="#8392a5" fontSize="9">5.2/10</text>
+
+                  {/* Metric 3: Interpretability */}
+                  <text x="10" y="140" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Interpretability Score</text>
+                  <rect x="180" y="128" width="182" height="10" fill="#0D6EFD" rx="2" />
+                  <rect x="180" y="140" width="120" height="10" fill="#8392a5" rx="2" />
+                  <text x="380" y="137" fill="#0D6EFD" fontSize="9" fontWeight="bold">9.1/10</text>
+                  <text x="380" y="149" fill="#8392a5" fontSize="9">6.0/10</text>
+
+                  {/* Metric 4: Inference Efficiency */}
+                  <text x="10" y="185" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Inference Speed (Efficiency)</text>
+                  <rect x="180" y="173" width="184" height="10" fill="#0D6EFD" rx="2" />
+                  <rect x="180" y="185" width="100" height="10" fill="#8392a5" rx="2" />
+                  <text x="380" y="182" fill="#0D6EFD" fontSize="9" fontWeight="bold">0.8s (Fast)</text>
+                  <text x="380" y="194" fill="#8392a5" fontSize="9">1.6s (Slow)</text>
+                </svg>
+              </div>
             </div>
 
             <table className="technical-metrics-table mt-6">
