@@ -146,6 +146,7 @@ export default function App() {
           <ExportReporting 
             onNavigate={(page) => setWorkspacePage(page)}
             triggerToast={triggerToast}
+            analysisResult={analysisResult}
           />
         );
       default:
