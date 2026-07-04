@@ -17,7 +17,7 @@
   align-items: center;
   padding: 16px 32px;
   border-bottom: 1px solid var(--border-muted);
-  background: rgba(10, 13, 20, 0.8);
+  background: rgba(254, 245, 231, 0.8);
   backdrop-filter: blur(12px);
   z-index: 100;
   position: sticky;
@@ -87,7 +87,7 @@
 .app-sidebar {
   width: 250px;
   border-right: 1px solid var(--border-muted);
-  background-color: rgba(16, 21, 36, 0.5);
+  background-color: rgba(254, 245, 231, 0.4);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -126,12 +126,12 @@
 
 .sidebar-menu-btn:hover {
   background-color: var(--bg-tertiary);
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .sidebar-menu-btn.active {
-  background-color: rgba(24, 95, 165, 0.08);
-  border-color: rgba(24, 95, 165, 0.2);
+  background-color: rgba(13, 110, 253, 0.08);
+  border-color: rgba(13, 110, 253, 0.2);
   color: var(--text-primary);
   font-weight: 600;
 }
@@ -380,6 +380,22 @@
   flex-direction: column;
   gap: 20px;
   min-height: 520px;
+}
+
+.dashboard-panel.input-panel {
+  background: var(--card-input-area) !important;
+  border: 1px solid var(--border-muted) !important;
+}
+
+.dashboard-panel.results-panel {
+  background: var(--card-main-score) !important;
+  border: 1px solid var(--border-muted) !important;
+}
+
+.dashboard-panel.input-panel .text-input-field {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(139, 120, 95, 0.25) !important;
 }
 
 .panel-header {
@@ -665,6 +681,14 @@
 .legend-dot.red { background-color: var(--color-fake); }
 
 /* Findings section */
+.findings-section {
+  background: var(--card-key-findings) !important;
+  border: 1px solid var(--border-muted);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
 .findings-section h4 {
   font-size: 14px;
   margin-bottom: 12px;
@@ -2289,4 +2313,72 @@ button {
 @keyframes node-bounce {
   from { transform: scale(1.0); }
   to { transform: scale(1.15); }
+}
+
+/* Dashboard Metrics Grid with pastel backgrounds */
+.dashboard-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+@media (min-width: 640px) {
+  .dashboard-metrics-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pastel-metric-card {
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 6px 20px rgba(139, 120, 95, 0.04);
+  border: 1px solid rgba(139, 120, 95, 0.15);
+  transition: var(--transition-smooth);
+}
+
+.pastel-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(139, 120, 95, 0.08);
+}
+
+.pastel-metric-card .card-lbl {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.pastel-metric-card .card-val {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.pastel-metric-card .card-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.pastel-metric-card.nlp-card {
+  background: var(--card-nlp-metric) !important;
+}
+
+.pastel-metric-card.gnn-card {
+  background: var(--card-gnn-metric) !important;
+}
+
+.pastel-metric-card.source-card {
+  background: var(--card-source-rep) !important;
+}
+
+.pastel-metric-card.spread-card {
+  background: var(--card-spread-rate) !important;
 }
