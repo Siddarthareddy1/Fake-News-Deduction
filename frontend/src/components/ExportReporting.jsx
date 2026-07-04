@@ -6,12 +6,10 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
   const [reportType, setReportType] = useState('full'); // 'exec' | 'full' | 'data'
   const [format, setFormat] = useState('pdf'); // 'pdf' | 'html' | 'json' | 'csv'
   const [sections, setSections] = useState({
-    results: true,
-    graph: true,
-    confidence: true,
-    risk: true,
-    ablation: false,
-    methodology: false
+    propagation: true,
+    noise: true,
+    attribution: true,
+    metrics: true
   });
   
   const [isCompiling, setIsCompiling] = useState(false);
@@ -78,6 +76,8 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
       stats: { nodes: 156, edges: 234, words: 1200, sources: 3, mentions: 15 }
     };
 
+    const isFake = result.verdict === 'FAKE';
+    const isUncertain = result.verdict === 'UNCERTAIN';
     const finalVerdictText = result.verdict === 'REAL' ? 'LIKELY REAL' : result.verdict === 'FAKE' ? 'LIKELY FAKE' : 'UNCERTAIN';
     const confidenceText = `${result.confidence}%`;
     const riskText = `${result.risk} RISK`;
@@ -85,9 +85,14 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
     if (format === 'pdf') {
       try {
         const doc = new jsPDF();
-        const isFake = result.verdict === 'FAKE';
+        let pageNum = 1;
+        const totalPages = 1 + 
+          (sections.propagation ? 1 : 0) + 
+          (sections.noise ? 1 : 0) + 
+          (sections.attribution ? 1 : 0) + 
+          (sections.metrics ? 1 : 0);
         
-        // ---------------- PAGE 1 ----------------
+        // ---------------- PAGE 1: Summary ----------------
         // Report Header
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
@@ -166,187 +171,214 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
         // Footer Page 1
         doc.setFontSize(8);
         doc.setTextColor(148, 163, 184);
-        doc.text("Page 1 of 4 | NEGT Verification Suite", 20, 285);
+        doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
 
-        // ---------------- PAGE 2 ----------------
-        doc.addPage();
-        
-        // Section Header
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(16);
-        doc.setTextColor(24, 95, 165);
-        doc.text("Section 1: Cascade Topology & Engagement", 20, 25);
-        
-        doc.setDrawColor(226, 232, 240);
-        doc.line(20, 30, 190, 30);
-        
-        // Topological metrics
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Cascade Depth Summary:", 20, 42);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        doc.text(`Max Propagation Hops: ${isFake ? '4 Hops' : '5 Hops'}`, 25, 50);
-        doc.text(`Average Breadth: ${isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}`, 25, 56);
-        doc.text(`Structural Virality Score: ${isFake ? '8.4/10 (High)' : '2.1/10 (Low)'}`, 25, 62);
-        doc.text(`Clustering Coefficient: ${isFake ? '0.64' : '0.12'}`, 25, 68);
-        
-        // Source distribution
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Source Domain Referencing Distribution:", 20, 82);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        doc.text(`Verified Press: ${isFake ? '14%' : '64%'}`, 25, 90);
-        doc.text(`Social Networks: ${isFake ? '62%' : '25%'}`, 25, 96);
-        doc.text(`Blogs / Self-Published Domains: ${isFake ? '24%' : '11%'}`, 25, 102);
-        
-        // Sentiment profile
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("User Sentiment Profile Summary:", 20, 116);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        doc.text(`Sentiment Verdict: ${isFake ? 'Sensationalist & biased outrage pattern' : 'Informative & authentic citation pattern'}`, 25, 124);
-        doc.text("Emotional Distribution: ", 25, 130);
-        doc.text(`- Angry / Hostile: ${isFake ? '58%' : '12%'}`, 30, 136);
-        doc.text(`- Skeptical: ${isFake ? '34%' : '24%'}`, 30, 142);
-        doc.text(`- Trusting: ${isFake ? '8%' : '64%'}`, 30, 148);
-        
-        // Footer Page 2
-        doc.setFontSize(8);
-        doc.setTextColor(148, 163, 184);
-        doc.text("Page 2 of 4 | NEGT Verification Suite", 20, 285);
+        // ---------------- PAGE 2: Propagation Analytics ----------------
+        if (sections.propagation) {
+          doc.addPage();
+          pageNum++;
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(16);
+          doc.setTextColor(24, 95, 165);
+          doc.text("Section 1: Propagation Analytics", 20, 25);
+          
+          doc.setDrawColor(226, 232, 240);
+          doc.line(20, 30, 190, 30);
+          
+          // Topological metrics
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Cascade Depth Summary:", 20, 42);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text(`Max Propagation Hops: ${isFake ? '4 Hops' : '5 Hops'}`, 25, 50);
+          doc.text(`Average Breadth: ${isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}`, 25, 56);
+          doc.text(`Structural Virality Score: ${isFake ? '8.4/10 (High)' : '2.1/10 (Low)'}`, 25, 62);
+          doc.text(`Clustering Coefficient: ${isFake ? '0.64' : '0.12'}`, 25, 68);
+          
+          // Source distribution
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Source Domain Referencing Distribution:", 20, 82);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text(`Verified Press: ${isFake ? '14%' : '64%'}`, 25, 90);
+          doc.text(`Social Networks: ${isFake ? '62%' : '25%'}`, 25, 96);
+          doc.text(`Blogs / Self-Published Domains: ${isFake ? '24%' : '11%'}`, 25, 102);
+          
+          // Sentiment profile
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("User Sentiment Profile Summary:", 20, 116);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text(`Sentiment Verdict: ${isFake ? 'Sensationalist & biased outrage pattern' : 'Informative & authentic citation pattern'}`, 25, 124);
+          doc.text("Emotional Distribution: ", 25, 130);
+          doc.text(`- Angry / Hostile: ${isFake ? '58%' : '12%'}`, 30, 136);
+          doc.text(`- Skeptical: ${isFake ? '34%' : '24%'}`, 30, 142);
+          doc.text(`- Trusting: ${isFake ? '8%' : '64%'}`, 30, 148);
+          
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184);
+          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
+        }
 
-        // ---------------- PAGE 3 ----------------
-        doc.addPage();
-        
-        // Section Header
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(16);
-        doc.setTextColor(24, 95, 165);
-        doc.text("Section 2: Isolated Noise Filtration Analysis", 20, 25);
-        
-        doc.line(20, 30, 190, 30);
-        
-        // Denoising stats
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Graph Information Bottleneck (GIB) Denoising Summary:", 20, 42);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        doc.text(`Suspicious Patterns Detected: ${isFake ? '7' : '1'}`, 25, 50);
-        doc.text(`Bot-like Activity Rating: ${isFake ? '42%' : '4%'}`, 25, 56);
-        doc.text(`Anomalous Links / Clickbaits: ${isFake ? '3' : '0'}`, 25, 62);
-        doc.text(`Noise Filtering Score (GIB): ${isFake ? '89%' : '98%'}`, 25, 68);
-        
-        // GIB Explanation
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Information Bottleneck Denoising Mechanism:", 20, 82);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        const splitExplanation = doc.splitTextToSize("Standard GNNs are highly susceptible to 'structural noise' – thousands of random retweeters drowning out the early credibility patterns. Our model introduces a Graph Information Bottleneck that regularizes representation learning. It compresses the input graph structures, pruning irrelevant nodes (with up to 89% precision) and leaving a high-fidelity diagnostic backbone.", 170);
-        doc.text(splitExplanation, 20, 88);
-        
-        // Footer Page 3
-        doc.setFontSize(8);
-        doc.setTextColor(148, 163, 184);
-        doc.text("Page 3 of 4 | NEGT Verification Suite", 20, 285);
+        // ---------------- PAGE 3: Noise Analysis ----------------
+        if (sections.noise) {
+          doc.addPage();
+          pageNum++;
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(16);
+          doc.setTextColor(24, 95, 165);
+          doc.text("Section 2: Noise Analysis (Denoising)", 20, 25);
+          
+          doc.setDrawColor(226, 232, 240);
+          doc.line(20, 30, 190, 30);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Graph Information Bottleneck (GIB) Denoising Summary:", 20, 42);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text(`Suspicious Patterns Detected: ${isFake ? '7' : '1'}`, 25, 50);
+          doc.text(`Bot-like Activity Rating: ${isFake ? '42%' : '4%'}`, 25, 56);
+          doc.text(`Anomalous Links / Clickbaits: ${isFake ? '3' : '0'}`, 25, 62);
+          doc.text(`Noise Filtering Score (GIB): ${isFake ? '89%' : '98%'}`, 25, 68);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Information Bottleneck Denoising Mechanism:", 20, 82);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          const splitExplanation = doc.splitTextToSize("Standard GNNs are highly susceptible to 'structural noise' – thousands of random retweeters drowning out the early credibility patterns. Our model introduces a Graph Information Bottleneck that regularizes representation learning. It compresses the input graph structures, pruning irrelevant nodes (with up to 89% precision) and leaving a high-fidelity diagnostic backbone.", 170);
+          doc.text(splitExplanation, 20, 88);
+          
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184);
+          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
+        }
 
-        // ---------------- PAGE 4 ----------------
-        doc.addPage();
-        
-        // Section Header
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(16);
-        doc.setTextColor(24, 95, 165);
-        doc.text("Section 3: Feature Attributions & Performance", 20, 25);
-        
-        doc.line(20, 30, 190, 30);
-        
-        // Feature attributions
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("GNN Feature Attribution Weights:", 20, 42);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        doc.text(`Early User Credibility: ${isFake ? '23%' : '29%'}`, 25, 50);
-        doc.text(`Source Domain Trust: ${isFake ? '19%' : '35%'}`, 25, 56);
-        doc.text(`Engagement Velocity: ${isFake ? '18%' : '8%'}`, 25, 62);
-        doc.text(`Propagation Diversity: ${isFake ? '15%' : '18%'}`, 25, 68);
-        
-        // Performance table
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Technical Performance Evaluation Metrics:", 20, 82);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(51, 65, 85);
-        
-        doc.text("Metric Name", 20, 90);
-        doc.text("Score", 80, 90);
-        doc.text("Benchmark Avg.", 115, 90);
-        doc.text("Assessment", 155, 90);
-        
-        doc.setLineWidth(0.3);
-        doc.line(20, 92, 190, 92);
-        
-        doc.text("Classification Accuracy", 20, 98);
-        doc.text("94.2%", 80, 98);
-        doc.text("85.1%", 115, 98);
-        doc.text("Excellent (+9.1% gain)", 155, 98);
-        
-        doc.text("Noise Robustness (GIB)", 20, 104);
-        doc.text("8.7/10", 80, 104);
-        doc.text("5.2/10", 115, 104);
-        doc.text("Highly Resistant", 155, 104);
-        
-        doc.text("Interpretability Score", 20, 110);
-        doc.text("9.1/10", 80, 110);
-        doc.text("6.0/10", 115, 110);
-        doc.text("Explainable Attention", 155, 110);
-        
-        doc.text("Inference Latency", 20, 116);
-        doc.text("0.8s", 80, 116);
-        doc.text("1.6s", 115, 116);
-        doc.text("Low overhead", 155, 116);
-        
-        // Hyperparameters
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.setTextColor(15, 23, 42);
-        doc.text("Model Hyperparameters Configuration:", 20, 132);
-        
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        doc.setTextColor(100, 116, 139);
-        doc.text("Layers: 4 transformer blocks | Heads: 8 divided partitions | GIB Bottleneck Ratio: 0.15 | Noise Scale: 0.05", 20, 138);
+        // ---------------- PAGE 4: Feature Attribution ----------------
+        if (sections.attribution) {
+          doc.addPage();
+          pageNum++;
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(16);
+          doc.setTextColor(24, 95, 165);
+          doc.text("Section 3: Feature Attribution", 20, 25);
+          
+          doc.setDrawColor(226, 232, 240);
+          doc.line(20, 30, 190, 30);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("GNN Feature Attribution Weights:", 20, 42);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text(`Early User Credibility: ${isFake ? '23%' : '29%'}`, 25, 50);
+          doc.text(`Source Domain Trust: ${isFake ? '19%' : '35%'}`, 25, 56);
+          doc.text(`Engagement Velocity: ${isFake ? '18%' : '8%'}`, 25, 62);
+          doc.text(`Propagation Diversity: ${isFake ? '15%' : '18%'}`, 25, 68);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Methodological Description:", 20, 82);
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          const splitExplanationAttr = doc.splitTextToSize("Feature attributions highlight which network signals the Graph Neural Network prioritized. Higher weights reflect features that contributed most heavily towards classification. For organic posts, Domain Trust is dominant, whereas Velocity and bot clusters govern fake news indicators.", 170);
+          doc.text(splitExplanationAttr, 20, 88);
+          
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184);
+          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
+        }
 
-        // Footer Page 4
-        doc.setFontSize(8);
-        doc.setTextColor(148, 163, 184);
-        doc.text("Page 4 of 4 | NEGT Verification Suite", 20, 285);
+        // ---------------- PAGE 5: Detailed Metrics ----------------
+        if (sections.metrics) {
+          doc.addPage();
+          pageNum++;
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(16);
+          doc.setTextColor(24, 95, 165);
+          doc.text("Section 4: Detailed Metrics", 20, 25);
+          
+          doc.setDrawColor(226, 232, 240);
+          doc.line(20, 30, 190, 30);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Technical Performance Evaluation Metrics:", 20, 42);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          
+          doc.text("Metric Name", 20, 52);
+          doc.text("Score", 80, 52);
+          doc.text("Benchmark Avg.", 115, 52);
+          doc.text("Assessment", 155, 52);
+          
+          doc.setLineWidth(0.3);
+          doc.line(20, 54, 190, 54);
+          
+          doc.text("Classification Accuracy", 20, 60);
+          doc.text("94.2%", 80, 60);
+          doc.text("85.1%", 115, 60);
+          doc.text("Excellent (+9.1% gain)", 155, 60);
+          
+          doc.text("Noise Robustness (GIB)", 20, 66);
+          doc.text("8.7/10", 80, 66);
+          doc.text("5.2/10", 115, 66);
+          doc.text("Highly Resistant", 155, 66);
+          
+          doc.text("Interpretability Score", 20, 72);
+          doc.text("9.1/10", 80, 72);
+          doc.text("6.0/10", 115, 72);
+          doc.text("Explainable Attention", 155, 72);
+          
+          doc.text("Inference Latency", 20, 78);
+          doc.text("0.8s", 80, 78);
+          doc.text("1.6s", 115, 78);
+          doc.text("Low overhead", 155, 78);
+          
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(12);
+          doc.setTextColor(15, 23, 42);
+          doc.text("Model Hyperparameters Configuration:", 20, 94);
+          
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(100, 116, 139);
+          doc.text("Layers: 4 transformer blocks | Heads: 8 divided partitions | GIB Bottleneck Ratio: 0.15 | Noise Scale: 0.05", 20, 100);
+
+          doc.setFontSize(8);
+          doc.setTextColor(148, 163, 184);
+          doc.text(`Page ${pageNum} of ${totalPages} | NEGT Verification Suite`, 20, 285);
+        }
         
         const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.pdf`;
         doc.save(filename);
@@ -364,34 +396,173 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
 
     if (format === 'json') {
       mimeType = "application/json";
-      fileContent = JSON.stringify({
+      const exportObject = {
         reportType: reportType === 'full' ? 'Technical Report' : reportType === 'exec' ? 'Executive Summary' : 'Data Sheet',
         model: "NEGT v1.2",
         verdict: finalVerdictText,
         confidence: confidenceText,
         riskLevel: riskText,
         newsText: result.text || "",
-        graphSummary: { nodes: result.stats.nodes, edges: result.stats.edges },
-        inputStats: { words: result.stats.words, sources: result.stats.sources, mentions: result.stats.mentions },
-        keyFindings: result.keyFindings,
         generatedAt: new Date().toISOString(),
-        sectionsIncluded: Object.keys(sections).filter(k => sections[k])
-      }, null, 2);
+        keyFindings: result.keyFindings,
+        topologicalStats: { nodes: result.stats.nodes, edges: result.stats.edges, words: result.stats.words, sources: result.stats.sources, mentions: result.stats.mentions }
+      };
+
+      if (sections.propagation) {
+        exportObject.propagationAnalytics = {
+          maxHops: isFake ? '4 Hops' : '5 Hops',
+          avgBreadth: isFake ? '11.2 nodes/hop' : '3.6 nodes/hop',
+          viralityScore: isFake ? '8.4/10' : '2.1/10',
+          clusteringCoefficient: isFake ? '0.64' : '0.12',
+          verifiedPressPct: isFake ? '14%' : '64%',
+          socialNetworksPct: isFake ? '62%' : '25%',
+          blogsPct: isFake ? '24%' : '11%',
+          sentimentVerdict: isFake ? 'Sensationalist & biased outrage pattern' : 'Informative & authentic citation pattern'
+        };
+      }
+
+      if (sections.noise) {
+        exportObject.noiseAnalysis = {
+          suspiciousPatterns: isFake ? 7 : 1,
+          botActivityRating: isFake ? '42%' : '4%',
+          anomalousLinks: isFake ? 3 : 0,
+          gibScore: isFake ? '89%' : '98%'
+        };
+      }
+
+      if (sections.attribution) {
+        exportObject.featureAttribution = {
+          earlyUserCredibility: isFake ? '23%' : '29%',
+          sourceDomainTrust: isFake ? '19%' : '35%',
+          engagementVelocity: isFake ? '18%' : '8%',
+          propagationDiversity: isFake ? '15%' : '18%'
+        };
+      }
+
+      if (sections.metrics) {
+        exportObject.performanceMetrics = {
+          accuracy: '94.2%',
+          robustnessGIB: '8.7/10',
+          interpretabilityScore: '9.1/10',
+          latency: '0.8s',
+          hyperparameters: 'Layers: 4 transformer blocks | Heads: 8 divided partitions | GIB Ratio: 0.15 | Noise Scale: 0.05'
+        };
+      }
+
+      fileContent = JSON.stringify(exportObject, null, 2);
     } else if (format === 'csv') {
       mimeType = "text/csv";
-      fileContent = "Metric,Value\n" +
-                    "Model,NEGT v1.2\n" +
-                    `Verdict,${finalVerdictText}\n` +
-                    `Confidence,${confidenceText}\n` +
-                    `Risk Level,${riskText}\n` +
-                    `Nodes,${result.stats.nodes}\n` +
-                    `Edges,${result.stats.edges}\n` +
-                    `Words,${result.stats.words}\n` +
-                    `Sources,${result.stats.sources}\n` +
-                    `Mentions,${result.stats.mentions}\n` +
-                    `Generated At,${new Date().toISOString()}\n`;
+      let csvContent = "Section,Metric,Value\n" +
+                    `Summary,Model,NEGT v1.2\n` +
+                    `Summary,Verdict,${finalVerdictText}\n` +
+                    `Summary,Confidence,${confidenceText}\n` +
+                    `Summary,Risk Level,${riskText}\n` +
+                    `Summary,Nodes,${result.stats.nodes}\n` +
+                    `Summary,Edges,${result.stats.edges}\n` +
+                    `Summary,Words,${result.stats.words}\n` +
+                    `Summary,Sources,${result.stats.sources}\n` +
+                    `Summary,Mentions,${result.stats.mentions}\n`;
+
+      if (sections.propagation) {
+        csvContent += `Propagation,Max Propagation Hops,${isFake ? '4 Hops' : '5 Hops'}\n` +
+                      `Propagation,Average Breadth,${isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}\n` +
+                      `Propagation,Structural Virality,${isFake ? '8.4/10' : '2.1/10'}\n` +
+                      `Propagation,Clustering Coefficient,${isFake ? '0.64' : '0.12'}\n` +
+                      `Propagation,Verified Press Pct,${isFake ? '14%' : '64%'}\n` +
+                      `Propagation,Social Networks Pct,${isFake ? '62%' : '25%'}\n` +
+                      `Propagation,Blogs Pct,${isFake ? '24%' : '11%'}\n` +
+                      `Propagation,Sentiment Verdict,${isFake ? 'Sensationalist' : 'Informative'}\n`;
+      }
+
+      if (sections.noise) {
+        csvContent += `Noise,Suspicious Patterns,${isFake ? 7 : 1}\n` +
+                      `Noise,Bot Activity Rating,${isFake ? '42%' : '4%'}\n` +
+                      `Noise,Anomalous Links,${isFake ? 3 : 0}\n` +
+                      `Noise,GIB Score,${isFake ? '89%' : '98%'}\n`;
+      }
+
+      if (sections.attribution) {
+        csvContent += `Attribution,Early User Credibility,${isFake ? '23%' : '29%'}\n` +
+                      `Attribution,Source Domain Trust,${isFake ? '19%' : '35%'}\n` +
+                      `Attribution,Engagement Velocity,${isFake ? '18%' : '8%'}\n` +
+                      `Attribution,Propagation Diversity,${isFake ? '15%' : '18%'}\n`;
+      }
+
+      if (sections.metrics) {
+        csvContent += `Metrics,Classification Accuracy,94.2%\n` +
+                      `Metrics,Noise Robustness,8.7/10\n` +
+                      `Metrics,Interpretability Score,9.1/10\n` +
+                      `Metrics,Inference Latency,0.8s\n`;
+      }
+
+      fileContent = csvContent;
     } else if (format === 'html') {
       mimeType = "text/html";
+      let htmlBodyContent = `
+        <h1>NEGT Authenticity Report</h1>
+        <p><strong>Verdict:</strong> <span class="badge ${result.verdict.toLowerCase()}">${finalVerdictText} (${confidenceText} Confidence)</span></p>
+        <p><strong>Risk Level:</strong> ${riskText}</p>
+        <p><strong>Model:</strong> NEGT v1.2</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+        
+        <div class="section-title">Key Findings:</div>
+        <ul>
+          ${result.keyFindings.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+      `;
+
+      if (sections.propagation) {
+        htmlBodyContent += `
+          <div class="section-title">1. Propagation Analytics:</div>
+          <ul>
+            <li>Max Hops: ${isFake ? '4 Hops' : '5 Hops'}</li>
+            <li>Avg Breadth: ${isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}</li>
+            <li>Virality: ${isFake ? '8.4/10' : '2.1/10'}</li>
+            <li>Verified Press Share: ${isFake ? '14%' : '64%'}</li>
+            <li>Social Networks Share: ${isFake ? '62%' : '25%'}</li>
+            <li>Blogs / Self-Published Domains: ${isFake ? '24%' : '11%'}</li>
+            <li>Sentiment: ${isFake ? 'Sensationalist Outrage' : 'Informative Citation'}</li>
+          </ul>
+        `;
+      }
+
+      if (sections.noise) {
+        htmlBodyContent += `
+          <div class="section-title">2. Noise Analysis:</div>
+          <ul>
+            <li>Suspicious Patterns: ${isFake ? 7 : 1}</li>
+            <li>Bot Activity Rating: ${isFake ? '42%' : '4%'}</li>
+            <li>Anomalous Links: ${isFake ? 3 : 0}</li>
+            <li>Noise Filtering Score (GIB): ${isFake ? '89%' : '98%'}</li>
+          </ul>
+        `;
+      }
+
+      if (sections.attribution) {
+        htmlBodyContent += `
+          <div class="section-title">3. Feature Attribution:</div>
+          <ul>
+            <li>Early User Credibility: ${isFake ? '23%' : '29%'}</li>
+            <li>Source Domain Trust: ${isFake ? '19%' : '35%'}</li>
+            <li>Engagement Velocity: ${isFake ? '18%' : '8%'}</li>
+            <li>Propagation Diversity: ${isFake ? '15%' : '18%'}</li>
+          </ul>
+        `;
+      }
+
+      if (sections.metrics) {
+        htmlBodyContent += `
+          <div class="section-title">4. Technical Performance Evaluation:</div>
+          <ul>
+            <li>Classification Accuracy: 94.2%</li>
+            <li>Noise Robustness: 8.7/10</li>
+            <li>Interpretability Score: 9.1/10</li>
+            <li>Inference Latency: 0.8s</li>
+            <li>Hyperparameters: Layers 4, Heads 8, GIB Ratio 0.15, Noise Scale 0.05</li>
+          </ul>
+        `;
+      }
+
       fileContent = `<!DOCTYPE html>
 <html>
 <head>
@@ -404,38 +575,19 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
     .badge.real { background: #097b40; }
     .badge.fake { background: #a32d2d; }
     .badge.uncertain { background: #ba7517; }
-    .section-title { font-weight: bold; margin-top: 20px; color: #1d9e75; }
+    .section-title { font-weight: bold; margin-top: 20px; color: #1d9e75; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
     ul { padding-left: 20px; }
-    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; font-size: 13px; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>NEGT Authenticity Report</h1>
-    <p><strong>Verdict:</strong> <span class="badge ${result.verdict.toLowerCase()}">${finalVerdictText} (${confidenceText} Confidence)</span></p>
-    <p><strong>Risk Level:</strong> ${riskText}</p>
-    <p><strong>Model:</strong> NEGT v1.2</p>
-    <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-    
-    <div class="section-title">Cascade Statistics:</div>
-    <div class="meta-grid">
-      <div>Nodes Count: ${result.stats.nodes}</div>
-      <div>Edges Count: ${result.stats.edges}</div>
-      <div>Word Count: ${result.stats.words}</div>
-      <div>Social Mentions: ${result.stats.mentions}</div>
-    </div>
-
-    <div class="section-title">Key Findings:</div>
-    <ul>
-      ${result.keyFindings.map(f => `<li>${f}</li>`).join('')}
-    </ul>
+    ${htmlBodyContent}
   </div>
 </body>
 </html>`;
     } else {
-      // TXT (Plain Text) summary
-      mimeType = "text/plain";
-      fileContent = `=====================================================
+      // TXT (Plain Text) Summary
+      let txtContent = `=====================================================
           NEGT AUTHENTICITY ANALYSIS REPORT
 =====================================================
 Report Type: Technical Verification Report
@@ -451,10 +603,47 @@ TOPOLOGICAL PROFILE STATISTICS:
 - Article Word Count: ${result.stats.words}
 - Sources Extracted: ${result.stats.sources}
 - Social Media Mentions: ${result.stats.mentions}
------------------------------------------------------
-KEY FINDINGS:
-${result.keyFindings.map((f, i) => `${i + 1}. ${f}`).join('\n')}
-=====================================================`;
+-----------------------------------------------------\n`;
+
+      if (sections.propagation) {
+        txtContent += `[Section 1: Propagation Analytics]\n` +
+                      `- Max Propagation Hops: ${isFake ? '4 Hops' : '5 Hops'}\n` +
+                      `- Average Breadth: ${isFake ? '11.2 nodes/hop' : '3.6 nodes/hop'}\n` +
+                      `- Structural Virality Score: ${isFake ? '8.4/10' : '2.1/10'}\n` +
+                      `- Clustering Coefficient: ${isFake ? '0.64' : '0.12'}\n` +
+                      `- Verified Press: ${isFake ? '14%' : '64%'}\n` +
+                      `- Social Networks: ${isFake ? '62%' : '25%'}\n` +
+                      `- Blogs/Other: ${isFake ? '24%' : '11%'}\n` +
+                      `- Sentiment Verdict: ${isFake ? 'Sensationalist Outrage' : 'Informative Citation'}\n\n`;
+      }
+
+      if (sections.noise) {
+        txtContent += `[Section 2: Noise Analysis]\n` +
+                      `- Suspicious Patterns: ${isFake ? 7 : 1}\n` +
+                      `- Bot Activity Rating: ${isFake ? '42%' : '4%'}\n` +
+                      `- Anomalous Links/Clickbaits: ${isFake ? 3 : 0}\n` +
+                      `- Noise Filtering Score: ${isFake ? '89%' : '98%'}\n\n`;
+      }
+
+      if (sections.attribution) {
+        txtContent += `[Section 3: Feature Attribution]\n` +
+                      `- Early User Credibility: ${isFake ? '23%' : '29%'}\n` +
+                      `- Source Domain Trust: ${isFake ? '19%' : '35%'}\n` +
+                      `- Engagement Velocity: ${isFake ? '18%' : '8%'}\n` +
+                      `- Propagation Diversity: ${isFake ? '15%' : '18%'}\n\n`;
+      }
+
+      if (sections.metrics) {
+        txtContent += `[Section 4: Detailed Performance Metrics]\n` +
+                      `- Classification Accuracy: 94.2%\n` +
+                      `- Noise Robustness GIB: 8.7/10\n` +
+                      `- Interpretability Score: 9.1/10\n` +
+                      `- Inference Latency: 0.8s\n` +
+                      `- Configuration: Layers 4, Heads 8, GIB Ratio 0.15, Noise Scale 0.05\n\n`;
+      }
+
+      txtContent += `=====================================================`;
+      fileContent = txtContent;
     }
 
     const blob = new Blob([fileContent], { type: mimeType });
@@ -552,50 +741,34 @@ ${result.keyFindings.map((f, i) => `${i + 1}. ${f}`).join('\n')}
                 <label className="checkbox-item">
                   <input 
                     type="checkbox" 
-                    checked={sections.results}
-                    onChange={() => toggleSection('results')}
+                    checked={sections.propagation}
+                    onChange={() => toggleSection('propagation')}
                   />
-                  <span className="lbl">Detection Results Summary</span>
+                  <span className="lbl">Propagation Analytics</span>
                 </label>
                 <label className="checkbox-item">
                   <input 
                     type="checkbox" 
-                    checked={sections.graph}
-                    onChange={() => toggleSection('graph')}
+                    checked={sections.noise}
+                    onChange={() => toggleSection('noise')}
                   />
-                  <span className="lbl">Propagation Graph Preview</span>
+                  <span className="lbl">Noise Analysis</span>
                 </label>
                 <label className="checkbox-item">
                   <input 
                     type="checkbox" 
-                    checked={sections.confidence}
-                    onChange={() => toggleSection('confidence')}
+                    checked={sections.attribution}
+                    onChange={() => toggleSection('attribution')}
                   />
-                  <span className="lbl">Confidence Breakdown</span>
+                  <span className="lbl">Feature Attribution</span>
                 </label>
                 <label className="checkbox-item">
                   <input 
                     type="checkbox" 
-                    checked={sections.risk}
-                    onChange={() => toggleSection('risk')}
+                    checked={sections.metrics}
+                    onChange={() => toggleSection('metrics')}
                   />
-                  <span className="lbl">Risk Analysis Indicators</span>
-                </label>
-                <label className="checkbox-item">
-                  <input 
-                    type="checkbox" 
-                    checked={sections.ablation}
-                    onChange={() => toggleSection('ablation')}
-                  />
-                  <span className="lbl">Ablation Metrics Table</span>
-                </label>
-                <label className="checkbox-item">
-                  <input 
-                    type="checkbox" 
-                    checked={sections.methodology}
-                    onChange={() => toggleSection('methodology')}
-                  />
-                  <span className="lbl">Technical Methodology Annex</span>
+                  <span className="lbl">Detailed Metrics</span>
                 </label>
               </div>
             </div>

@@ -783,6 +783,19 @@
   background-color: rgba(10, 13, 20, 0.4);
 }
 
+.sticky-tab-headers {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgba(10, 13, 20, 0.85) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-muted);
+}
+
+.scroll-mt-20 {
+  scroll-margin-top: 24px;
+}
+
 .tab-btn {
   background: transparent;
   border: none;
