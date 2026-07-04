@@ -68,13 +68,13 @@
 }
 
 .navbar-nav-links button:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  background-color: rgba(13, 110, 253, 0.08);
 }
 
 .navbar-nav-links button.active {
-  color: var(--accent-secondary);
-  background-color: rgba(29, 158, 117, 0.08);
+  color: var(--accent-primary);
+  background-color: rgba(13, 110, 253, 0.12);
 }
 
 /* App Main Container Workspace Shell */
@@ -168,7 +168,7 @@
 .profile-info .name {
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .profile-info .role {
@@ -340,7 +340,7 @@
   font-family: var(--font-heading);
   font-size: 32px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .overview-stat-label {
@@ -467,7 +467,7 @@
 .quick-stat-pill .val {
   font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* Loading Overlay */
@@ -528,7 +528,7 @@
 }
 
 .step-item.active {
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -764,7 +764,7 @@
 .summary-col .val {
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .summary-verdict-badge {
@@ -833,8 +833,8 @@
 }
 
 .tab-btn:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+  background-color: rgba(13, 110, 253, 0.05);
 }
 
 .tab-btn.active {
@@ -929,7 +929,7 @@
 
 .legend-row .val {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* Gauge Chart Layout */
@@ -983,7 +983,7 @@
 
 .metric-row .val {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* Noise analysis pane */
@@ -1386,14 +1386,14 @@
 }
 
 .btn-filter-toggle:hover {
-  color: #ffffff;
+  color: var(--text-primary);
   background-color: var(--bg-tertiary);
 }
 
 .btn-filter-toggle.active {
-  background-color: rgba(24, 95, 165, 0.08);
+  background-color: rgba(13, 110, 253, 0.08);
   border-color: var(--accent-primary);
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .inspector-empty-placeholder {
@@ -1438,7 +1438,7 @@
 .node-profile-handle {
   font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .profile-stats-grid {
@@ -1465,7 +1465,7 @@
 .profile-stat-box .val {
   font-size: 11px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .profile-activity-log h5 {
@@ -1638,7 +1638,7 @@
 .verdict-banner .verdict-val {
   font-size: 18px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .verdict-banner .verdict-sub {
@@ -1668,7 +1668,7 @@
 
 .metric-item-row .val {
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .compare-summary-box {
@@ -1736,7 +1736,7 @@
 }
 
 .comparison-table tr.highlight-row td.model-name {
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .comparison-table tr.highlight-row td.val-text {
@@ -1959,7 +1959,7 @@
 
 .radio-meta .lbl {
   font-size: 13px;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .radio-meta .desc {

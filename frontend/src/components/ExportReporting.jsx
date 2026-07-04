@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SpinnerIcon, CheckIcon } from './Icons';
 import { jsPDF } from 'jspdf';
+import DetailedAnalysis from './DetailedAnalysis';
 
 export default function ExportReporting({ onNavigate, triggerToast, analysisResult }) {
   const [reportType, setReportType] = useState('full'); // 'exec' | 'full' | 'data'
@@ -86,9 +87,9 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
       try {
         // We use client-side capture with html2canvas to guarantee exact pixel parity 
         // with the visually detailed dashboard, embedding all custom graphs, charts, tables, and colors.
-        const detailedContainer = document.querySelector('.detailed-analysis-container');
+        const detailedContainer = document.querySelector('#capture-pdf-target .detailed-analysis-container');
         if (!detailedContainer) {
-          triggerToast('error', 'Detailed analysis layout element not found. Please click View Full Report first.');
+          triggerToast('error', 'Detailed analysis layout target not ready. Please try again.');
           return;
         }
 
@@ -685,6 +686,11 @@ TOPOLOGICAL PROFILE STATISTICS:
             </button>
           </div>
         </div>
+      </div>
+      
+      {/* Hidden container for PDF capture */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '0', width: '1000px', background: '#fcf6f1' }} id="capture-pdf-target">
+        <DetailedAnalysis analysisResult={analysisResult} onNavigate={() => {}} />
       </div>
     </div>
   );
