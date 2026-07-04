@@ -4,34 +4,39 @@
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-heading: 'Outfit', sans-serif;
 
-  /* Premium Dark Theme Palette */
-  --bg-primary: #0a0c10;
-  --bg-secondary: #121620;
-  --bg-tertiary: #1a2030;
-  --bg-glass: rgba(18, 22, 32, 0.7);
-  --bg-glass-hover: rgba(26, 32, 48, 0.8);
+  /* Palette A: Trust & Authority themed Premium Dark Mode */
+  --bg-primary: #0a0d14;      /* Deep Dark Slate */
+  --bg-secondary: #101524;    /* Slate Blue Card Background */
+  --bg-tertiary: #171f33;     /* Lighter Slate Blue for Hover/Focus */
+  --bg-glass: rgba(16, 21, 36, 0.75);
+  --bg-glass-hover: rgba(23, 31, 51, 0.85);
   
-  --border-glow: rgba(99, 102, 241, 0.15);
-  --border-muted: #242b3d;
+  --border-glow: rgba(24, 95, 165, 0.25); /* Deep Blue Glow */
+  --border-muted: #1e293b;
   
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
   
-  /* Vibrant Accent Colors */
-  --accent-primary: #6366f1; /* Indigo */
-  --accent-secondary: #06b6d4; /* Cyan */
-  --accent-glow: rgba(99, 102, 241, 0.4);
+  /* Palette A Accents */
+  --accent-primary: #185fa5;     /* Deep Blue */
+  --accent-primary-hover: #0c447c;
+  --accent-secondary: #1d9e75;   /* Teal */
+  --accent-secondary-hover: #0f6e56;
+  --accent-coral: #d85a30;       /* Coral Accent */
+  --accent-coral-hover: #993c1d;
+  --accent-glow: rgba(24, 95, 165, 0.45);
+  --accent-teal-glow: rgba(29, 158, 117, 0.3);
   
-  /* Functional Colors */
-  --color-real: #10b981; /* Emerald */
-  --color-fake: #ef4444; /* Rose */
-  --color-bot: #f59e0b; /* Amber */
-  --color-noise: rgba(239, 68, 68, 0.2);
+  /* Status Colors */
+  --color-real: #097b40;       /* Deep Green */
+  --color-fake: #a32d2d;       /* Deep Red */
+  --color-uncertain: #ba7517;  /* Amber */
+  --color-high-risk: #d85a30;  /* Orange-Red Accent */
+  --color-low-risk: #097b40;   /* Green */
   
-  --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {

@@ -1,0 +1,273 @@
+import React, { useState } from 'react';
+import { SpinnerIcon, CheckIcon } from './Icons';
+
+export default function ExportReporting({ onNavigate, triggerToast }) {
+  const [reportType, setReportType] = useState('full'); // 'exec' | 'full' | 'data'
+  const [format, setFormat] = useState('pdf'); // 'pdf' | 'html' | 'json' | 'csv'
+  const [sections, setSections] = useState({
+    results: true,
+    graph: true,
+    confidence: true,
+    risk: true,
+    ablation: false,
+    methodology: false
+  });
+  
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [isGenerated, setIsGenerated] = useState(false);
+  const [compileStep, setCompileStep] = useState('');
+
+  const toggleSection = (key) => {
+    setSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const handleGenerate = () => {
+    setIsCompiling(true);
+    setIsGenerated(false);
+    
+    // Simulate compilation pipeline steps
+    const steps = [
+      "Gathering evaluation metadata...",
+      "Assembling SVG propagation graphs...",
+      "Compiling GIB noise filtration metrics...",
+      "Structuring layout template modules...",
+      "Finalizing document assembly..."
+    ];
+
+    let stepIdx = 0;
+    const interval = setInterval(() => {
+      if (stepIdx < steps.length) {
+        setCompileStep(steps[stepIdx]);
+        stepIdx++;
+      } else {
+        clearInterval(interval);
+        setIsCompiling(false);
+        setIsGenerated(true);
+        triggerToast('success', 'Report compiled successfully! Click Download to fetch file.');
+      }
+    }, 500);
+  };
+
+  const handleDownload = () => {
+    if (!isGenerated) {
+      triggerToast('warning', 'Please generate the report first');
+      return;
+    }
+    triggerToast('success', `File "negt_verification_report.${format}" downloaded successfully.`);
+  };
+
+  const handlePrint = () => {
+    if (!isGenerated) {
+      triggerToast('warning', 'Please generate the report first');
+      return;
+    }
+    triggerToast('info', 'Opening printer layout...');
+  };
+
+  return (
+    <div className="export-reporting-container">
+      {/* Breadcrumb */}
+      <div className="breadcrumb-section">
+        <span className="breadcrumb-link" onClick={() => onNavigate('home')}>Home</span>
+        <span className="breadcrumb-separator">&gt;</span>
+        <span className="breadcrumb-active">Generate Report</span>
+      </div>
+
+      <div className="export-grid-layout">
+        {/* Left Options Form */}
+        <div className="export-panel glass-panel">
+          <div className="panel-header">
+            <h3>📥 Report Configuration</h3>
+            <p className="section-desc">Customize sections and document formats to export</p>
+          </div>
+
+          <div className="export-form-body mt-6">
+            {/* 1. Report Type */}
+            <div className="form-group-section">
+              <h5>Report Type</h5>
+              <div className="radio-options-grid mt-2">
+                <label className={`radio-label-box ${reportType === 'exec' ? 'selected' : ''}`}>
+                  <input 
+                    type="radio" 
+                    name="reportType" 
+                    value="exec"
+                    checked={reportType === 'exec'}
+                    onChange={() => setReportType('exec')}
+                  />
+                  <div className="radio-meta">
+                    <span className="lbl font-semibold">Executive Summary</span>
+                    <span className="desc">Compact 1-2 pages overview</span>
+                  </div>
+                </label>
+
+                <label className={`radio-label-box ${reportType === 'full' ? 'selected' : ''}`}>
+                  <input 
+                    type="radio" 
+                    name="reportType" 
+                    value="full"
+                    checked={reportType === 'full'}
+                    onChange={() => setReportType('full')}
+                  />
+                  <div className="radio-meta">
+                    <span className="lbl font-semibold">(Recommended) Technical Report</span>
+                    <span className="desc">Detailed 10-15 pages analysis</span>
+                  </div>
+                </label>
+
+                <label className={`radio-label-box ${reportType === 'data' ? 'selected' : ''}`}>
+                  <input 
+                    type="radio" 
+                    name="reportType" 
+                    value="data"
+                    checked={reportType === 'data'}
+                    onChange={() => setReportType('data')}
+                  />
+                  <div className="radio-meta">
+                    <span className="lbl font-semibold">Raw Data Sheet</span>
+                    <span className="desc">CSV or JSON file format</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* 2. Include Sections */}
+            <div className="form-group-section mt-6">
+              <h5>Include Sections</h5>
+              <div className="checkboxes-grid mt-2">
+                <label className="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    checked={sections.results}
+                    onChange={() => toggleSection('results')}
+                  />
+                  <span className="lbl">Detection Results Summary</span>
+                </label>
+                <label className="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    checked={sections.graph}
+                    onChange={() => toggleSection('graph')}
+                  />
+                  <span className="lbl">Propagation Graph Preview</span>
+                </label>
+                <label className="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    checked={sections.confidence}
+                    onChange={() => toggleSection('confidence')}
+                  />
+                  <span className="lbl">Confidence Breakdown</span>
+                </label>
+                <label className="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    checked={sections.risk}
+                    onChange={() => toggleSection('risk')}
+                  />
+                  <span className="lbl">Risk Analysis Indicators</span>
+                </label>
+                <label className="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    checked={sections.ablation}
+                    onChange={() => toggleSection('ablation')}
+                  />
+                  <span className="lbl">Ablation Metrics Table</span>
+                </label>
+                <label className="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    checked={sections.methodology}
+                    onChange={() => toggleSection('methodology')}
+                  />
+                  <span className="lbl">Technical Methodology Annex</span>
+                </label>
+              </div>
+            </div>
+
+            {/* 3. Export Format */}
+            <div className="form-group-section mt-6">
+              <h5>Export Format</h5>
+              <div className="radio-formats-row mt-2">
+                <label className={`radio-format-pill ${format === 'pdf' ? 'selected' : ''}`}>
+                  <input type="radio" name="format" value="pdf" checked={format === 'pdf'} onChange={() => setFormat('pdf')} />
+                  <span>PDF (Recommended)</span>
+                </label>
+                <label className={`radio-format-pill ${format === 'html' ? 'selected' : ''}`}>
+                  <input type="radio" name="format" value="html" checked={format === 'html'} onChange={() => setFormat('html')} />
+                  <span>HTML (Interactive)</span>
+                </label>
+                <label className={`radio-format-pill ${format === 'json' ? 'selected' : ''}`}>
+                  <input type="radio" name="format" value="json" checked={format === 'json'} onChange={() => setFormat('json')} />
+                  <span>JSON (Data Heavy)</span>
+                </label>
+                <label className={`radio-format-pill ${format === 'csv' ? 'selected' : ''}`}>
+                  <input type="radio" name="format" value="csv" checked={format === 'csv'} onChange={() => setFormat('csv')} />
+                  <span>CSV (Spreadsheet)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Compilation & Generation State */}
+        <div className="export-panel glass-panel flex-col-center">
+          <div className="panel-header w-full">
+            <h3>📋 Report Compiler Output</h3>
+          </div>
+
+          <div className="compiler-visualizer-box mt-6 w-full">
+            {isCompiling && (
+              <div className="compiling-state animate-pulse">
+                <SpinnerIcon className="w-12 h-12 text-teal animate-spin mb-4" />
+                <h4>Compiling Report...</h4>
+                <p className="text-secondary text-xs mt-2">{compileStep}</p>
+              </div>
+            )}
+
+            {!isCompiling && isGenerated && (
+              <div className="generated-state animate-fade-in flex-col-center">
+                <div className="success-icon-badge">✓</div>
+                <h4>Report Generated Successfully!</h4>
+                <p className="text-secondary text-xs mt-1">Ready for offline download and printing</p>
+                <div className="generated-metadata mt-4">
+                  <div className="metadata-row">
+                    <span className="lbl">File Name:</span>
+                    <span className="val font-semibold">negt_report_{Date.now().toString().slice(-6)}.{format}</span>
+                  </div>
+                  <div className="metadata-row">
+                    <span className="lbl">Size:</span>
+                    <span className="val">2.8 MB</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!isCompiling && !isGenerated && (
+              <div className="awaiting-state flex-col-center text-center">
+                <div className="awaiting-graphic">📥</div>
+                <h4>Ready to Generate</h4>
+                <p className="text-secondary text-xs mt-1">Configure options on the left and click Generate</p>
+              </div>
+            )}
+          </div>
+
+          <div className="button-group-row justify-center w-full mt-8">
+            <button className="btn-primary" onClick={handleGenerate} disabled={isCompiling}>
+              Generate Report
+            </button>
+            <button className="btn-secondary" onClick={handleDownload} disabled={isCompiling || !isGenerated}>
+              Download
+            </button>
+            <button className="btn-secondary" onClick={handlePrint} disabled={isCompiling || !isGenerated}>
+              Print
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
