@@ -80,8 +80,16 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
     const finalVerdictText = result.verdict === 'REAL' ? 'LIKELY REAL' : result.verdict === 'FAKE' ? 'LIKELY FAKE' : 'UNCERTAIN';
     const confidenceText = `${result.confidence}%`;
     const riskText = `${result.risk} RISK`;
-    const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.${format}`;
 
+    if (format === 'pdf') {
+      triggerToast('info', 'Opening print preview... Select "Save as PDF" to save the report.');
+      setTimeout(() => {
+        window.print();
+      }, 500);
+      return;
+    }
+
+    const filename = `negt_verification_report_${Date.now().toString().slice(-6)}.${format}`;
     let fileContent = "";
     let mimeType = "text/plain";
 
@@ -156,7 +164,7 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
 </body>
 </html>`;
     } else {
-      // PDF representation (Text summary)
+      // TXT (Plain Text) summary
       mimeType = "text/plain";
       fileContent = `=====================================================
           NEGT AUTHENTICITY ANALYSIS REPORT
@@ -329,7 +337,7 @@ ${result.keyFindings.map((f, i) => `${i + 1}. ${f}`).join('\n')}
               <div className="radio-formats-row mt-2">
                 <label className={`radio-format-pill ${format === 'pdf' ? 'selected' : ''}`}>
                   <input type="radio" name="format" value="pdf" checked={format === 'pdf'} onChange={() => setFormat('pdf')} />
-                  <span>PDF (Recommended)</span>
+                  <span>PDF (via Print)</span>
                 </label>
                 <label className={`radio-format-pill ${format === 'html' ? 'selected' : ''}`}>
                   <input type="radio" name="format" value="html" checked={format === 'html'} onChange={() => setFormat('html')} />
@@ -342,6 +350,10 @@ ${result.keyFindings.map((f, i) => `${i + 1}. ${f}`).join('\n')}
                 <label className={`radio-format-pill ${format === 'csv' ? 'selected' : ''}`}>
                   <input type="radio" name="format" value="csv" checked={format === 'csv'} onChange={() => setFormat('csv')} />
                   <span>CSV (Spreadsheet)</span>
+                </label>
+                <label className={`radio-format-pill ${format === 'txt' ? 'selected' : ''}`}>
+                  <input type="radio" name="format" value="txt" checked={format === 'txt'} onChange={() => setFormat('txt')} />
+                  <span>TXT (Plain Text)</span>
                 </label>
               </div>
             </div>
