@@ -2382,3 +2382,131 @@ button {
 .pastel-metric-card.spread-card {
   background: var(--card-spread-rate) !important;
 }
+
+/* PDF Capture Target Styles (Force High Contrast Light Theme) */
+#capture-pdf-target {
+  --bg-primary: #ffffff !important;
+  --bg-secondary: #f8fafc !important;
+  --bg-tertiary: #f1f5f9 !important;
+  --bg-glass: #ffffff !important;
+  --border-muted: #cbd5e1 !important;
+  --text-primary: #1a1a1a !important;
+  --text-secondary: #333333 !important;
+  --text-muted: #4b5563 !important;
+  
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+/* Ensure no elements remain in a loading/skeleton or low-opacity animation state */
+#capture-pdf-target,
+#capture-pdf-target * {
+  animation: none !important;
+  transition: none !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+#capture-pdf-target .glass-panel {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border-color: #94a3b8 !important; /* Stronger gray border for high contrast */
+  box-shadow: none !important;
+}
+
+#capture-pdf-target h1,
+#capture-pdf-target h2,
+#capture-pdf-target h3,
+#capture-pdf-target h4,
+#capture-pdf-target h5,
+#capture-pdf-target h6 {
+  color: #1a1a1a !important;
+}
+
+#capture-pdf-target p,
+#capture-pdf-target span,
+#capture-pdf-target div,
+#capture-pdf-target td,
+#capture-pdf-target th,
+#capture-pdf-target li {
+  color: #333333 !important;
+}
+
+#capture-pdf-target .text-secondary,
+#capture-pdf-target .chart-footer-text,
+#capture-pdf-target .finding-item .text,
+#capture-pdf-target .summary-col .val,
+#capture-pdf-target .legend-item .val {
+  color: #1a1a1a !important;
+}
+
+#capture-pdf-target .text-muted,
+#capture-pdf-target .chart-subtitle,
+#capture-pdf-target .report-title-label,
+#capture-pdf-target .summary-col .label,
+#capture-pdf-target .attr-desc,
+#capture-pdf-target .score-desc,
+#capture-pdf-target .val-text,
+#capture-pdf-target .legend-item .lbl {
+  color: #4b5563 !important; /* Meets WCAG AA contrast requirement on white background */
+}
+
+/* Force dark color for SVG grid lines and axis text */
+#capture-pdf-target svg text {
+  fill: #1a1a1a !important;
+  opacity: 1 !important;
+}
+
+#capture-pdf-target svg line {
+  stroke: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+/* Maintain special accent color styles for badges and status values */
+#capture-pdf-target .summary-verdict-badge.real {
+  color: #166534 !important; /* Darker green (contrast ratio of 7:1+) */
+}
+#capture-pdf-target .summary-verdict-badge.fake {
+  color: #991b1b !important; /* Darker red (contrast ratio of 7:1+) */
+}
+#capture-pdf-target .summary-verdict-badge.uncertain {
+  color: #c2410c !important; /* Darker orange (contrast ratio of 5:1+) */
+}
+
+#capture-pdf-target .summary-verdict-badge.real .dot {
+  background-color: #166534 !important;
+}
+#capture-pdf-target .summary-verdict-badge.fake .dot {
+  background-color: #991b1b !important;
+}
+#capture-pdf-target .summary-verdict-badge.uncertain .dot {
+  background-color: #c2410c !important;
+}
+
+#capture-pdf-target .summary-verdict-badge .conf {
+  color: #4b5563 !important;
+}
+
+/* Support background colors for progress bar track and bar fills */
+#capture-pdf-target .bar-track {
+  background-color: #e2e8f0 !important;
+}
+
+#capture-pdf-target .bar-fill.teal { background-color: #00A8E8 !important; }
+#capture-pdf-target .bar-fill.blue { background-color: #0D6EFD !important; }
+#capture-pdf-target .bar-fill.coral { background-color: #FF9800 !important; }
+
+/* Denoising score gauges and other components */
+#capture-pdf-target .success-icon-badge {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+#capture-pdf-target .noise-metric-card.highlight-teal {
+  border-color: #00A8E8 !important;
+  background-color: #f0fdf4 !important;
+}
+
+

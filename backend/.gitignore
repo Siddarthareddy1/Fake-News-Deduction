@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Environments
+.env
+.venv
+venv/
+ENV/
+env/
+.python/
+
+# Logs
+*.log
+logs/
+
+# Model weights and heavy data files
+*.pt
+*.pth
+*.bin
+*.pkl
+backend/app/ml_models/weights/
+data/

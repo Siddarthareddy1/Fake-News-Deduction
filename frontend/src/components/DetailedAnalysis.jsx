@@ -120,30 +120,30 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
                 <div className="svg-chart-container">
                   <svg viewBox="0 0 400 200" width="100%" height="150" className="svg-element">
                     {/* Grid Lines */}
-                    <line x1="40" y1="20" x2="380" y2="20" stroke="#1e293b" strokeDasharray="3,3" />
-                    <line x1="40" y1="70" x2="380" y2="70" stroke="#1e293b" strokeDasharray="3,3" />
-                    <line x1="40" y1="120" x2="380" y2="120" stroke="#1e293b" strokeDasharray="3,3" />
-                    <line x1="40" y1="170" x2="380" y2="170" stroke="#1e293b" />
-                    <line x1="40" y1="20" x2="40" y2="170" stroke="#1e293b" />
+                    <line x1="40" y1="20" x2="380" y2="20" stroke="#cbd5e1" strokeDasharray="3,3" />
+                    <line x1="40" y1="70" x2="380" y2="70" stroke="#cbd5e1" strokeDasharray="3,3" />
+                    <line x1="40" y1="120" x2="380" y2="120" stroke="#cbd5e1" strokeDasharray="3,3" />
+                    <line x1="40" y1="170" x2="380" y2="170" stroke="#cbd5e1" />
+                    <line x1="40" y1="20" x2="40" y2="170" stroke="#cbd5e1" />
 
                     {/* X Axis Labels */}
-                    <text x="40" y="188" fill="var(--text-muted)" fontSize="9">0h</text>
-                    <text x="125" y="188" fill="var(--text-muted)" fontSize="9">12h</text>
-                    <text x="210" y="188" fill="var(--text-muted)" fontSize="9">24h</text>
-                    <text x="295" y="188" fill="var(--text-muted)" fontSize="9">36h</text>
-                    <text x="380" y="188" fill="var(--text-muted)" fontSize="9">48h</text>
+                    <text x="40" y="188" fill="#4b5563" fontSize="9">0h</text>
+                    <text x="125" y="188" fill="#4b5563" fontSize="9">12h</text>
+                    <text x="210" y="188" fill="#4b5563" fontSize="9">24h</text>
+                    <text x="295" y="188" fill="#4b5563" fontSize="9">36h</text>
+                    <text x="380" y="188" fill="#4b5563" fontSize="9">48h</text>
 
                     {/* Y Axis Labels */}
-                    <text x="10" y="23" fill="var(--text-muted)" fontSize="9">1.2k</text>
-                    <text x="10" y="73" fill="var(--text-muted)" fontSize="9">800</text>
-                    <text x="10" y="123" fill="var(--text-muted)" fontSize="9">400</text>
-                    <text x="10" y="173" fill="var(--text-muted)" fontSize="9">0</text>
+                    <text x="10" y="23" fill="#4b5563" fontSize="9">1.2k</text>
+                    <text x="10" y="73" fill="#4b5563" fontSize="9">800</text>
+                    <text x="10" y="123" fill="#4b5563" fontSize="9">400</text>
+                    <text x="10" y="173" fill="#4b5563" fontSize="9">0</text>
 
                     {/* Confidence Band (Area) */}
                     {isFake ? (
-                      <path d="M 40 170 Q 70 80, 100 30 T 150 90 T 250 140 T 380 160 L 380 170 Z" fill="rgba(216, 90, 48, 0.15)" />
+                      <path d="M 40 170 Q 70 80, 100 30 T 150 90 T 250 140 T 380 160 L 380 170 Z" fill="rgba(255, 152, 0, 0.15)" />
                     ) : (
-                      <path d="M 40 170 Q 100 150, 180 110 T 280 80 T 380 50 L 380 170 Z" fill="rgba(29, 158, 117, 0.15)" />
+                      <path d="M 40 170 Q 100 150, 180 110 T 280 80 T 380 50 L 380 170 Z" fill="rgba(76, 175, 80, 0.15)" />
                     )}
 
                     {/* Graph Line */}
@@ -151,23 +151,23 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
                       <path 
                         d="M 40 170 Q 70 80, 100 30 T 150 90 T 250 140 T 380 160" 
                         fill="none" 
-                        stroke="var(--accent-coral)" 
+                        stroke="#FF9800" 
                         strokeWidth="3.5" 
                       />
                     ) : (
                       <path 
                         d="M 40 170 Q 100 150, 180 110 T 280 80 T 380 50" 
                         fill="none" 
-                        stroke="var(--secondary-teal)" 
+                        stroke="#1D9E75" 
                         strokeWidth="3.5" 
                       />
                     )}
 
                     {/* Anchor point */}
                     {isFake ? (
-                      <circle cx="100" cy="30" r="5" fill="var(--accent-coral)" />
+                      <circle cx="100" cy="30" r="5" fill="#FF9800" />
                     ) : (
-                      <circle cx="280" cy="80" r="5" fill="var(--secondary-teal)" />
+                      <circle cx="280" cy="80" r="5" fill="#1D9E75" />
                     )}
                   </svg>
                 </div>
@@ -361,24 +361,24 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
               <div className="svg-chart-container mt-4">
                 <svg viewBox="0 0 400 160" width="100%" height="160" className="svg-element">
                   {/* Bar 1: Early User Credibility */}
-                  <text x="10" y="25" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Early User Credibility</text>
+                  <text x="10" y="25" fill="#1e293b" fontSize="9.5" fontWeight="bold">Early User Credibility</text>
                   <rect x="140" y="14" width={isFake ? "92" : "116"} height="16" fill="#0D6EFD" rx="4" />
-                  <text x={isFake ? "242" : "266"} y="26" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '23%' : '29%'}</text>
+                  <text x={isFake ? "242" : "266"} y="26" fill="#1e293b" fontSize="9.5" fontWeight="bold">{isFake ? '23%' : '29%'}</text>
 
                   {/* Bar 2: Source Domain Trust */}
-                  <text x="10" y="60" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Source Domain Trust</text>
+                  <text x="10" y="60" fill="#1e293b" fontSize="9.5" fontWeight="bold">Source Domain Trust</text>
                   <rect x="140" y="49" width={isFake ? "76" : "140"} height="16" fill="#00A8E8" rx="4" />
-                  <text x={isFake ? "226" : "290"} y="61" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '19%' : '35%'}</text>
+                  <text x={isFake ? "226" : "290"} y="61" fill="#1e293b" fontSize="9.5" fontWeight="bold">{isFake ? '19%' : '35%'}</text>
 
                   {/* Bar 3: Engagement Velocity */}
-                  <text x="10" y="95" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Engagement Velocity</text>
+                  <text x="10" y="95" fill="#1e293b" fontSize="9.5" fontWeight="bold">Engagement Velocity</text>
                   <rect x="140" y="84" width={isFake ? "72" : "32"} height="16" fill="#FF9800" rx="4" />
-                  <text x={isFake ? "222" : "182"} y="96" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '18%' : '8%'}</text>
+                  <text x={isFake ? "222" : "182"} y="96" fill="#1e293b" fontSize="9.5" fontWeight="bold">{isFake ? '18%' : '8%'}</text>
 
                   {/* Bar 4: Propagation Diversity */}
-                  <text x="10" y="130" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">Propagation Diversity</text>
+                  <text x="10" y="130" fill="#1e293b" fontSize="9.5" fontWeight="bold">Propagation Diversity</text>
                   <rect x="140" y="119" width={isFake ? "60" : "72"} height="16" fill="#4CAF50" rx="4" />
-                  <text x={isFake ? "210" : "222"} y="131" fill="var(--text-primary)" fontSize="9.5" fontWeight="bold">{isFake ? '15%' : '18%'}</text>
+                  <text x={isFake ? "210" : "222"} y="131" fill="#1e293b" fontSize="9.5" fontWeight="bold">{isFake ? '15%' : '18%'}</text>
                 </svg>
               </div>
             </div>
@@ -400,33 +400,33 @@ export default function DetailedAnalysis({ onNavigate, analysisResult }) {
                 <svg viewBox="0 0 500 220" width="100%" height="220" className="svg-element">
                   {/* Legend */}
                   <rect x="300" y="10" width="12" height="12" fill="#0D6EFD" rx="2" />
-                  <text x="318" y="20" fill="var(--text-primary)" fontSize="9" fontWeight="bold">NEGT Model Score</text>
+                  <text x="318" y="20" fill="#1e293b" fontSize="9" fontWeight="bold">NEGT Model Score</text>
                   <rect x="410" y="10" width="12" height="12" fill="#8392a5" rx="2" />
-                  <text x="428" y="20" fill="var(--text-primary)" fontSize="9" fontWeight="bold">Benchmark Avg.</text>
+                  <text x="428" y="20" fill="#1e293b" fontSize="9" fontWeight="bold">Benchmark Avg.</text>
 
                   {/* Metric 1: Accuracy */}
-                  <text x="10" y="50" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Classification Accuracy</text>
+                  <text x="10" y="50" fill="#1e293b" fontSize="10" fontWeight="bold">Classification Accuracy</text>
                   <rect x="180" y="38" width="188" height="10" fill="#0D6EFD" rx="2" />
                   <rect x="180" y="50" width="170" height="10" fill="#8392a5" rx="2" />
                   <text x="380" y="47" fill="#0D6EFD" fontSize="9" fontWeight="bold">94.2%</text>
                   <text x="380" y="59" fill="#8392a5" fontSize="9">85.1%</text>
 
                   {/* Metric 2: Noise Robustness */}
-                  <text x="10" y="95" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Noise Robustness (GIB)</text>
+                  <text x="10" y="95" fill="#1e293b" fontSize="10" fontWeight="bold">Noise Robustness (GIB)</text>
                   <rect x="180" y="83" width="174" height="10" fill="#0D6EFD" rx="2" />
                   <rect x="180" y="95" width="104" height="10" fill="#8392a5" rx="2" />
                   <text x="380" y="92" fill="#0D6EFD" fontSize="9" fontWeight="bold">8.7/10</text>
                   <text x="380" y="104" fill="#8392a5" fontSize="9">5.2/10</text>
 
                   {/* Metric 3: Interpretability */}
-                  <text x="10" y="140" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Interpretability Score</text>
+                  <text x="10" y="140" fill="#1e293b" fontSize="10" fontWeight="bold">Interpretability Score</text>
                   <rect x="180" y="128" width="182" height="10" fill="#0D6EFD" rx="2" />
                   <rect x="180" y="140" width="120" height="10" fill="#8392a5" rx="2" />
                   <text x="380" y="137" fill="#0D6EFD" fontSize="9" fontWeight="bold">9.1/10</text>
                   <text x="380" y="149" fill="#8392a5" fontSize="9">6.0/10</text>
 
                   {/* Metric 4: Inference Efficiency */}
-                  <text x="10" y="185" fill="var(--text-primary)" fontSize="10" fontWeight="bold">Inference Speed (Efficiency)</text>
+                  <text x="10" y="185" fill="#1e293b" fontSize="10" fontWeight="bold">Inference Speed (Efficiency)</text>
                   <rect x="180" y="173" width="184" height="10" fill="#0D6EFD" rx="2" />
                   <rect x="180" y="185" width="100" height="10" fill="#8392a5" rx="2" />
                   <text x="380" y="182" fill="#0D6EFD" fontSize="9" fontWeight="bold">0.8s (Fast)</text>

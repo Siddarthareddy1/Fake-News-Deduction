@@ -101,7 +101,7 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
           const canvas = await html2canvas(detailedContainer, {
             scale: 2, // High resolution scaling
             useCORS: true,
-            backgroundColor: '#fcf6f1', // Matches warm cream theme background
+            backgroundColor: '#ffffff', // Clean white background for print
             logging: false
           });
 
@@ -114,12 +114,12 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
           let heightLeft = imgHeight;
           let position = 0;
 
-          // Page 1: Premium Title Page with Color-Coded Verdict Badges
-          doc.setFillColor(254, 245, 231); // Warm Cream cover page color
+          // Page 1: Premium Title Page with Clean White Background
+          doc.setFillColor(255, 255, 255); // White cover page color
           doc.rect(0, 0, 210, 297, 'F');
 
           // Premium Border
-          doc.setDrawColor(232, 223, 213);
+          doc.setDrawColor(203, 213, 225); // Clean Slate Gray border
           doc.setLineWidth(2);
           doc.rect(10, 10, 190, 277);
 
@@ -181,8 +181,8 @@ export default function ExportReporting({ onNavigate, triggerToast, analysisResu
 
           while (heightLeft > 0) {
             doc.addPage();
-            // Background Warm Cream
-            doc.setFillColor(252, 246, 241);
+            // Background White
+            doc.setFillColor(255, 255, 255);
             doc.rect(0, 0, 210, 297, 'F');
             
             // Header
@@ -689,7 +689,7 @@ TOPOLOGICAL PROFILE STATISTICS:
       </div>
       
       {/* Hidden container for PDF capture */}
-      <div style={{ position: 'absolute', left: '-9999px', top: '0', width: '1000px', background: '#fcf6f1' }} id="capture-pdf-target">
+      <div style={{ position: 'absolute', left: '-9999px', top: '0', width: '1000px', background: '#ffffff' }} id="capture-pdf-target">
         <DetailedAnalysis analysisResult={analysisResult} onNavigate={() => {}} />
       </div>
     </div>
